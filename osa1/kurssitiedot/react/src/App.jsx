@@ -15,15 +15,21 @@ const App = () => {
     { label: part3, count: exercises3 },
   ];
 
-  const Content = ({ items }) => (
-    <>
-      {items.map((item, idx) => (
-        <p key={idx}>
-          {item.label} {item.count}
-        </p>
-      ))}
-    </>
+  const Part = ({ label, count }) => (
+    <p>
+      {label} {count}
+    </p>
   );
+
+  const Content = ({ items }) => {
+    return (
+      <div>
+        <Part label={items[0].label} count={items[0].count} />
+        <Part label={items[1].label} count={items[1].count} />
+        <Part label={items[2].label} count={items[2].count} />
+      </div>
+    );
+  };
 
   const Total = ({ exercises }) => (
     <p>Number of exercises {exercises.reduce((a, b) => a + b, 0)}</p>
