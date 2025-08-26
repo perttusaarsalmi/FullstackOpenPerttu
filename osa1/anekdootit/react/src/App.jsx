@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const Title = ({ title }) => <h1>{title}</h1>;
+
 const Button = (props) => <button onClick={props.onClick}>{props.text}</button>;
 
 const App = () => {
@@ -27,12 +29,21 @@ const App = () => {
     setVotes(copy);
   }
 
+  const getMaxVote = () => {
+    const maxVote = Math.max(...Object.values(votes));
+    return Object.keys(votes).find(key => votes[key] === maxVote);
+  };
+
   return (
     <div>
+      <Title title="Anecdote of the day" />
       <div>{anecdotes[selected]}</div>
       <div>Has {votes[selected]} votes</div>
       <Button onClick={() => voteAnecdote(selected)} text="vote" />
       <Button onClick={() => setSelectedValue()} text="next anecdote" />
+      <Title title="Anecdote with most votes"/>
+      <div>{anecdotes[getMaxVote()]}</div>
+      <div>Has {votes[getMaxVote()]} votes</div>
     </div>
   );
 };
