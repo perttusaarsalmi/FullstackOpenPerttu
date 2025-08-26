@@ -2,6 +2,19 @@ import { useState } from "react";
 
 const Title = ({ title }) => <h1>{title}</h1>;
 const Button = (props) => <button onClick={props.onClick}>{props.text}</button>;
+const Statistics = (props) => {
+  return (
+    <div>
+      <div>good {props.good}</div>
+      <div>neutral {props.neutral}</div>
+      <div>bad {props.bad}</div>
+      <div>all {props.getAllAmount()}</div>
+      <div>average {props.getAverage().toFixed(2)}</div>
+      <div>positive {props.getPositiveAverage().toFixed(2)} %</div>
+    </div>
+  );
+};
+
 
 const App = () => {
   // tallenna napit omaan tilaansa
@@ -43,12 +56,14 @@ const App = () => {
       <Button onClick={() => setToNeutral(neutral + 1)} text="neutral" />
       <Button onClick={() => setToBad(bad + 1)} text="bad" />
       <Title title="statistics"></Title>
-      <div>good {good}</div>
-      <div>neutral {neutral}</div>
-      <div>bad {bad}</div>
-      <div>all {getAllAmount()}</div>
-      <div>average {getAverage().toFixed(2)}</div>
-      <div>positive {getPositiveAverage().toFixed(2)} %</div>
+      <Statistics
+        good={good}
+        neutral={neutral}
+        bad={bad}
+        getAllAmount={getAllAmount}
+        getAverage={getAverage}
+        getPositiveAverage={getPositiveAverage}
+      />
     </div>
   );
 };
