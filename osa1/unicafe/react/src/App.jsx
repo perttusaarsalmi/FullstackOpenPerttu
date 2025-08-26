@@ -21,6 +21,20 @@ const App = () => {
     setBad(newValue);
   };
 
+  const getAllAmount = () => {
+    return good + neutral + bad;
+  };
+
+  const getAverage = () => {
+    if (getAllAmount() === 0) return 0;
+    return (good * 1 + neutral * 0 + bad * -1) / getAllAmount();
+  };
+
+  const getPositiveAverage = () => {
+    if (good == 0) return 0;
+    return (good / getAllAmount()) * 100;
+  };
+
   return (
     <div>
       <Title title="give feedback" />
@@ -32,6 +46,9 @@ const App = () => {
       <div>good {good}</div>
       <div>neutral {neutral}</div>
       <div>bad {bad}</div>
+      <div>all {getAllAmount()}</div>
+      <div>average {getAverage().toFixed(2)}</div>
+      <div>positive {getPositiveAverage().toFixed(2)} %</div>
     </div>
   );
 };
