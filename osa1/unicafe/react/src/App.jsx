@@ -3,6 +3,10 @@ import { useState } from "react";
 const Title = ({ title }) => <h1>{title}</h1>;
 const Button = (props) => <button onClick={props.onClick}>{props.text}</button>;
 const Statistics = (props) => {
+  if (props.getAllAmount() === 0) {
+    return <div>No feedback given</div>;
+  }
+
   return (
     <div>
       <div>good {props.good}</div>
@@ -14,7 +18,6 @@ const Statistics = (props) => {
     </div>
   );
 };
-
 
 const App = () => {
   // tallenna napit omaan tilaansa
