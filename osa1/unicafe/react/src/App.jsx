@@ -9,12 +9,35 @@ const Statistics = (props) => {
 
   return (
     <div>
-      <div>good {props.good}</div>
-      <div>neutral {props.neutral}</div>
-      <div>bad {props.bad}</div>
-      <div>all {props.getAllAmount()}</div>
-      <div>average {props.getAverage().toFixed(2)}</div>
-      <div>positive {props.getPositiveAverage().toFixed(2)} %</div>
+      <div>
+        <StatisticLine text="good" value={props.good} />
+      </div>
+      <div>
+        <StatisticLine text="neutral" value={props.neutral} />
+      </div>
+      <div>
+        <StatisticLine text="bad" value={props.bad} />
+      </div>
+      <div>
+        <StatisticLine text="all" value={props.getAllAmount()} />
+      </div>
+      <div>
+        <StatisticLine text="average" value={props.getAverage().toFixed(2)} />
+      </div>
+      <div>
+        <StatisticLine
+          text="positive"
+          value={props.getPositiveAverage().toFixed(2)}
+        />
+      </div>
+    </div>
+  );
+};
+
+const StatisticLine = (props) => {
+  return (
+    <div>
+      {props.text} {props.value}
     </div>
   );
 };
