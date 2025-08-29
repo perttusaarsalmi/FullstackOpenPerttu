@@ -8,6 +8,7 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [searchWord, setSearchWord] = useState("");
 
   const addNewPerson = (event) => {
     event.preventDefault();
@@ -23,6 +24,16 @@ const App = () => {
   return (
     <div>
       <Header text="Phonebook" />
+      <form>
+        <div>
+          filter sown with:{" "}
+          <input
+            value={searchWord}
+            onChange={(e) => setSearchWord(e.target.value)}
+          />
+        </div>
+      </form>
+      <Header text="add a new" />
       <form onSubmit={addNewPerson}>
         <div>
           name:{" "}
@@ -41,11 +52,13 @@ const App = () => {
       </form>
       <Header text="Numbers" />
       <div>
-        {persons.map((person) => (
-          <p key={person.name}>
-            {person.name} {person.number}
-          </p>
-        ))}
+        {persons
+          .filter((person) => person.name.includes(searchWord))
+          .map((person) => (
+            <p key={person.name}>
+              {person.name} {person.number}
+            </p>
+          ))}
       </div>
     </div>
   );
