@@ -1,9 +1,9 @@
-import { useState } from "react";
-import Button from "./components/Button";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import personsService from "./services/personsService";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -13,15 +13,30 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchWord, setSearchWord] = useState("");
 
+  useEffect(() => {
+    personsService.getAll().then((persons) => {
+      setPersons(persons);
+    });
+  }, []);
+
   const addNewPerson = (event) => {
     event.preventDefault();
     if (persons.some((person) => person.name === newName)) {
       window.alert(`${newName} is already added to phonebook`);
       return;
     }
-    setPersons([...persons, { name: newName, number: newNumber }]);
-    setNewName("");
-    setNewNumber("");
+    const newPerson = { name: newName, number: newNumber };
+    personsService.create(newPerson).then((returnedPerson) => {
+      setPersons([...persons, returnedPerson]);
+      setNewName("");
+      setNewNumber("");
+    });
+  };
+
+  const removePerson = (id) => {
+    personsService.remove(id).then(() => {
+      setPersons(persons.filter(person => person.id !== id));
+    });
   };
 
   return (
@@ -29,9 +44,19 @@ const App = () => {
       <Header text="Phonebook" />
       <Filter searchWord={searchWord} setSearchWord={setSearchWord} />
       <Header text="add a new" />
-      <PersonForm newName={newName} newNumber={newNumber} addNewPerson={addNewPerson} setNewName={setNewName} setNewNumber={setNewNumber} />
+      <PersonForm
+        newName={newName}
+        newNumber={newNumber}
+        addNewPerson={addNewPerson}
+        setNewName={setNewName}
+        setNewNumber={setNewNumber}
+      />
       <Header text="Numbers" />
-      <Persons persons={persons} searchWord={searchWord} />
+      <Persons
+        persons={persons}
+        searchWord={searchWord}
+        removePerson={removePerson}
+      />
     </div>
   );
 };
