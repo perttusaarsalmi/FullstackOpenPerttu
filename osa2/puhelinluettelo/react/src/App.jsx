@@ -3,7 +3,9 @@ import Header from "./components/Header";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 import personsService from "./services/personsService";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -12,6 +14,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchWord, setSearchWord] = useState("");
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     personsService.getAll().then((persons) => {
@@ -36,6 +39,7 @@ const App = () => {
       const newPerson = { name: newName, number: newNumber };
       personsService.create(newPerson).then((returnedPerson) => {
         setPersons([...persons, returnedPerson]);
+        setNotificationMessage(`Added ${newName}`, false);
       });
     } else {
       const searchedPerson = persons.find((person) => person.name === newName);
@@ -53,25 +57,44 @@ const App = () => {
                 person.id !== searchedPerson.id ? person : returnedPerson
               )
             );
+            setNotificationMessage(`Updated ${newName}`, false);
           });
       }
     }
     setNewName("");
     setNewNumber("");
+    setNotification("");
   };
 
   const removePerson = (id) => {
     const searchedPerson = persons.find((person) => person.id === id);
     if (window.confirm(`Delete ${searchedPerson.name}  ?`)) {
-      personsService.remove(id).then(() => {
-        setPersons(persons.filter((person) => person.id !== id));
-      });
+      personsService.remove(id).then(
+        () => {
+          setPersons(persons.filter((person) => person.id !== id));
+          setNotificationMessage(`Removed ${newName}`, false);
+        },
+        (error) => {
+          setNotificationMessage(
+            `Information of ${newName} has already been removed from server`,
+            true
+          );
+        }
+      );
     }
+  };
+
+  const setNotificationMessage = (message, isError) => {
+    setNotification({ text: message, isError: isError });
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
   };
 
   return (
     <div>
       <Header text="Phonebook" />
+      {notification && <Notification notification={notification} />}
       <Filter searchWord={searchWord} setSearchWord={setSearchWord} />
       <Header text="add a new" />
       <PersonForm
