@@ -3,18 +3,21 @@ import Button from "./components/Button";
 import Header from "./components/Header";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "0501234567" },
+  ]);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
 
   const addNewPerson = (event) => {
-
-    if (persons.some(person => person.name === newName )) {
+    event.preventDefault();
+    if (persons.some((person) => person.name === newName)) {
       window.alert(`${newName} is already added to phonebook`);
-    } else {
-      event.preventDefault();
-      setPersons([...persons, { name: newName }]);
-      setNewName("");
+      return;
     }
+    setPersons([...persons, { name: newName, number: newNumber }]);
+    setNewName("");
+    setNewNumber("");
   };
 
   return (
@@ -26,16 +29,22 @@ const App = () => {
           <input value={newName} onChange={(e) => setNewName(e.target.value)} />
         </div>
         <div>
-          <Button
-            type="submit"
-            text="add"
+          number:{" "}
+          <input
+            value={newNumber}
+            onChange={(e) => setNewNumber(e.target.value)}
           />
+        </div>
+        <div>
+          <Button type="submit" text="add" />
         </div>
       </form>
       <Header text="Numbers" />
       <div>
         {persons.map((person) => (
-          <p key={person.name}>{person.name}</p>
+          <p key={person.name}>
+            {person.name} {person.number}
+          </p>
         ))}
       </div>
     </div>
