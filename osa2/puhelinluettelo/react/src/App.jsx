@@ -21,16 +21,43 @@ const App = () => {
 
   const addNewPerson = (event) => {
     event.preventDefault();
-    if (persons.some((person) => person.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`);
+    if (
+      newName &&
+      persons.some(
+        (person) => person.name === newName && person.number === newNumber
+      )
+    ) {
+      window.alert(
+        `${newName} is already added to phonebook with a number ${newNumber}`
+      );
       return;
     }
-    const newPerson = { name: newName, number: newNumber };
-    personsService.create(newPerson).then((returnedPerson) => {
-      setPersons([...persons, returnedPerson]);
-      setNewName("");
-      setNewNumber("");
-    });
+    if (!persons.some((person) => person.name === newName)) {
+      const newPerson = { name: newName, number: newNumber };
+      personsService.create(newPerson).then((returnedPerson) => {
+        setPersons([...persons, returnedPerson]);
+      });
+    } else {
+      const searchedPerson = persons.find((person) => person.name === newName);
+      if (
+        window.confirm(
+          `${searchedPerson.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const updatedPerson = { name: newName, number: newNumber };
+        personsService
+          .update(searchedPerson.id, updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== searchedPerson.id ? person : returnedPerson
+              )
+            );
+          });
+      }
+    }
+    setNewName("");
+    setNewNumber("");
   };
 
   const removePerson = (id) => {
