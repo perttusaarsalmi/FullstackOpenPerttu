@@ -34,9 +34,12 @@ const App = () => {
   };
 
   const removePerson = (id) => {
-    personsService.remove(id).then(() => {
-      setPersons(persons.filter(person => person.id !== id));
-    });
+    const searchedPerson = persons.find((person) => person.id === id);
+    if (window.confirm(`Delete ${searchedPerson.name}  ?`)) {
+      personsService.remove(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
   };
 
   return (
