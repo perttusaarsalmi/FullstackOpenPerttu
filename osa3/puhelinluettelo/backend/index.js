@@ -34,7 +34,6 @@ app.get("/info", (request, response) => {
 });
 
 app.get("/api/persons", (request, response) => {
-  console.log(body.toString());
   response.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
   response.end(JSON.stringify(persons));
 });
