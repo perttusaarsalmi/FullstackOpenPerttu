@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 let persons = [
   { id: "1", name: "Arto Hellas", number: "040-123456" },
@@ -39,7 +40,27 @@ app.delete("/api/persons/:id", (request, response) => {
   response.status(204).end();
 });
 
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+
+  const person = {
+    number: body.number,
+    name: body.name,
+    id: generateId(),
+  };
+
+  persons = persons.concat(person);
+
+  response.json(person);
+});
+
 const PORT = 3002;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+const generateId = () => {
+  const maxId =
+    persons.length > 0 ? Math.max(...persons.map((n) => Number(n.id))) : 0;
+  return String(maxId + 1);
+};
