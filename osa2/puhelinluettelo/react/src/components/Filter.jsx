@@ -2,7 +2,7 @@ const Filter = (props) => {
   return (
     <form>
       <div>
-        filter sown with:{" "}
+        filter shown with:{" "}
         <input
           value={props.searchWord}
           onChange={(e) => props.setSearchWord(e.target.value)}
