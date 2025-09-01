@@ -21,6 +21,8 @@ morgan.token("body", (req) => {
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
+app.use(express.static('dist'));
+
 
 app.get("/info", (request, response) => {
   response.writeHead(200, {});
@@ -79,10 +81,10 @@ app.post("/api/persons", (request, response) => {
   response.json(person);
 });
 
-const PORT = 3002;
+const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  console.log(`Server running on port ${PORT}`)
+})
 
 const generateId = () => {
   const maxId =
