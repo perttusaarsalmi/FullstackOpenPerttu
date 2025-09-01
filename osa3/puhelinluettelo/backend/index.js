@@ -1,5 +1,5 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const app = express();
 
 let persons = [
   { name: "Arto Hellas", number: "040-123456" },
@@ -8,13 +8,21 @@ let persons = [
   { name: "Mary Poppendieck", number: "39-23-6423122" },
 ];
 
+app.get("/info", (request, response) => {
+  response.writeHead(200, {});
+  response.end(
+    `Phonebook has info for ${
+      persons.length
+    } people\n\n${new Date().toString()}`
+  );
+});
+
 app.get("/api/persons", (request, response) => {
-  response.writeHead(200, { "Content-Type": "application/json" });
+  response.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
   response.end(JSON.stringify(persons));
 });
 
-
-const PORT = 3002
+const PORT = 3002;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});
