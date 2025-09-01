@@ -1,4 +1,4 @@
-const Countries = (props) => {
+const CountryList = (props) => {
   return (
     <div>
       {props.countries
@@ -14,4 +14,4 @@ const Countries = (props) => {
   );
 };
 
-export default Countries;
+export default CountryList;
