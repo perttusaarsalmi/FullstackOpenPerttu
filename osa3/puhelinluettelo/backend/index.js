@@ -22,16 +22,22 @@ app.get("/api/persons", (request, response) => {
   response.end(JSON.stringify(persons));
 });
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = persons.find(person => person.id === id)
-  
+app.get("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const person = persons.find((person) => person.id === id);
+
   if (person) {
-    response.json(person)
+    response.json(person);
   } else {
-    response.status(404).end()
+    response.status(404).end();
   }
-})
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  persons = persons.filter((person) => person.id !== id);
+  response.status(204).end();
+});
 
 const PORT = 3002;
 app.listen(PORT, () => {
