@@ -3,7 +3,7 @@ import Search from "./components/Search";
 import CountryList from "./components/CountryList";
 import Country from "./components/Country";
 import countriesService from "./services/countriesService";
-import './index.css'
+import "./index.css";
 
 function App() {
   const [countries, setCountries] = useState([]);
@@ -19,6 +19,10 @@ function App() {
     setSearchWord(e.target.value);
   };
 
+  const handleShowCountry = (countryName) => {
+    setSearchWord(countryName);
+  };
+
   const filteredCountries = countries.filter((country) =>
     country.name.common.toLowerCase().includes(searchWord.toLowerCase())
   );
@@ -26,11 +30,17 @@ function App() {
   return (
     <div>
       <Search searchWord={searchWord} onSearchChange={handleSearchChange} />
-      {searchWord && filteredCountries.length <= 10 && filteredCountries.length > 1 && (
-        <CountryList countries={filteredCountries} searchWord={searchWord} />
-      )}
+      {searchWord &&
+        filteredCountries.length <= 10 &&
+        filteredCountries.length > 1 && (
+          <CountryList
+            countries={filteredCountries}
+            searchWord={searchWord}
+            onShowCountry={handleShowCountry}
+          />
+        )}
       {searchWord && filteredCountries.length == 1 && (
-        <Country country={filteredCountries[0]}/>
+        <Country country={filteredCountries[0]} />
       )}
       {searchWord && filteredCountries.length > 10 && (
         <div>Too many matches, specify another filter</div>
