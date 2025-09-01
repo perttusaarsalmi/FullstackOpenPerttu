@@ -10,7 +10,13 @@ const CountryList = (props) => {
             .includes(props.searchWord.toLowerCase())
         )
         .map((country) => (
-          <p key={country.name.common}>{country.name.common} <Button onClick={() => props.onShowCountry(country.name.common)} text={"show"}></Button></p>
+          <p key={country.name.common}>
+            {country.name.common}{" "}
+            <Button
+              onClick={() => props.onShowCountry(country.name.common)}
+              text={"Show"}
+            ></Button>
+          </p>
         ))}
     </div>
   );
