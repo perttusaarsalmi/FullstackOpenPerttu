@@ -2,9 +2,31 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
+const mongoose = require('mongoose')
+require('dotenv').config()
 
 app.use(express.json());
 app.use(cors());
+
+//const password = process.argv[2]
+// const url = `mongodb+srv://perttusaarsalmi_db_user:${password}@cluster0.ovwckyn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
+
+const url = process.env.MONGODB_URI
+console.log(url);
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+})
+
+const Person = mongoose.model('Person', personSchema)
 
 let persons = [
   { id: "1", name: "Arto Hellas", number: "040-123456" },
@@ -34,8 +56,10 @@ app.get("/info", (request, response) => {
 });
 
 app.get("/api/persons", (request, response) => {
-  response.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
-  response.end(JSON.stringify(persons));
+  response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+  Person.find({}).then((persons) => {
+    response.end(JSON.stringify(persons));
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
@@ -80,11 +104,6 @@ app.post("/api/persons", (request, response) => {
 
   response.json(person);
 });
-
-const PORT = process.env.PORT || 3002
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
 
 const generateId = () => {
   const maxId =
