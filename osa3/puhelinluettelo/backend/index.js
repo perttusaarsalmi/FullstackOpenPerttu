@@ -68,21 +68,21 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  if (persons.map((person) => person.name).includes(body.name)) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  }
+  // if (persons.map((person) => person.name).includes(body.name)) {
+  //   return response.status(400).json({
+  //     error: "name must be unique",
+  //   });
+  // }
 
-  const person = {
+  const person = new Person({
     number: body.number,
-    name: body.name,
-    id: generateId(),
-  };
+    name: body.name
+    //id: generateId(),
+  });
 
-  persons = persons.concat(person);
-
-  response.json(person);
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 const generateId = () => {
