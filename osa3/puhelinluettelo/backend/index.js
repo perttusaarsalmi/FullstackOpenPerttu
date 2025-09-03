@@ -60,7 +60,6 @@ app.get("/api/persons/:id", (request, response, next) => {
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
-  const id = request.params.id;
   Person.findByIdAndDelete(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -93,6 +92,35 @@ app.post("/api/persons", (request, response, next) => {
     .save()
     .then((savedPerson) => {
       response.json(savedPerson);
+    })
+    .catch((error) => next(error));
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  if (!body.number || !body.name) {
+    return response.status(400).json({
+      error: "name or phone number is missing",
+    });
+  }
+
+  const update = {
+    number: body.number,
+    name: body.name,
+  };
+
+  Person.findByIdAndUpdate(request.params.id, update, {
+    new: true,
+    runValidators: true,
+    context: "query"
+  })
+    .then((updatedPerson) => {
+      if (updatedPerson) {
+        response.json(updatedPerson);
+      } else {
+        response.status(404).json({ error: "person not found" });
+      }
     })
     .catch((error) => next(error));
 });
