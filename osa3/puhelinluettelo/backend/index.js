@@ -23,24 +23,28 @@ app.use(
 );
 app.use(express.static("dist"));
 
-app.get("/info", (request, response) => {
+app.get("/info", (request, response, next) => {
   response.writeHead(200, {});
-  Person.find({}).then((persons) => {
-    response.end(
-      `Phonebook has info for ${
-        persons.length
-      } people\n\n${new Date().toString()}`
-    );
-  });
+  Person.find({})
+    .then((persons) => {
+      response.end(
+        `Phonebook has info for ${
+          persons.length
+        } people\n\n${new Date().toString()}`
+      );
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons", (request, response) => {
+app.get("/api/persons", (request, response, next) => {
   response.writeHead(200, {
     "Content-Type": "application/json; charset=utf-8",
   });
-  Person.find({}).then((persons) => {
-    response.end(JSON.stringify(persons));
-  });
+  Person.find({})
+    .then((persons) => {
+      response.end(JSON.stringify(persons));
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/api/persons/:id", (request, response, next) => {
@@ -64,7 +68,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   if (!body.number || !body.name) {
@@ -85,9 +89,12 @@ app.post("/api/persons", (request, response) => {
     //id: generateId(),
   });
 
-  person.save().then((savedPerson) => {
-    response.json(savedPerson);
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      response.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 const generateId = () => {
