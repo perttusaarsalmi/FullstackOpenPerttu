@@ -21,26 +21,21 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-const person = new Person({
-  name: name,
-  number: number,
-})
-
 if (name && number) {
   const person = new Person({
     name: name,
     number: number,
-  });
+  })
 
   person.save().then(() => {
-    console.log('Person saved!');
-    mongoose.connection.close(); // Close connection after saving
-  });
+    console.log('Person saved!')
+    mongoose.connection.close() // Close connection after saving
+  })
 } else {
-  Person.find({}).then(result => {
-    result.forEach(person => {
-      console.log(person);
-    });
-    mongoose.connection.close(); // Close connection after listing
-  });
+  Person.find({}).then((result) => {
+    result.forEach((person) => {
+      console.log(person)
+    })
+    mongoose.connection.close() // Close connection after listing
+  })
 }
