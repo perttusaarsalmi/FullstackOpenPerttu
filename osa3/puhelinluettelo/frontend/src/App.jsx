@@ -37,10 +37,24 @@ const App = () => {
     }
     if (!persons.some((person) => person.name === newName)) {
       const newPerson = { name: newName, number: newNumber };
-      personsService.create(newPerson).then((returnedPerson) => {
-        setPersons([...persons, returnedPerson]);
-        setNotificationMessage(`Added ${newName}`, false);
-      });
+      personsService
+        .create(newPerson)
+        .then((returnedPerson) => {
+          setPersons([...persons, returnedPerson]);
+          setNotificationMessage(`Added ${newName}`, false);
+        })
+        .catch((error) => {
+          if (error.response && error.response.data) {
+            console.log(error.response.data);
+            setNotificationMessage(
+              error.response.data.error || error.response.data,
+              true
+            );
+          } else {
+            console.error(error.message);
+            setNotificationMessage("An unexpected error occurred", true);
+          }
+        });
     } else {
       const searchedPerson = persons.find((person) => person.name === newName);
       if (
