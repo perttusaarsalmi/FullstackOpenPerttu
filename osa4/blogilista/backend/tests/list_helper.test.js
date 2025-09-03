@@ -160,7 +160,7 @@ describe('favourite blog', () => {
     assert.deepStrictEqual(result, listWithOneBlog[0])
   })
 
-    test('of the bigger list is correct', () => {
+  test('of the bigger list is correct', () => {
     const result = listHelper.favouriteBlog(biggerListOfBlogs)
     assert.deepStrictEqual(result, biggerListOfBlogs[2])
   })
