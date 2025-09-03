@@ -120,3 +120,19 @@ describe('most blogs', () => {
     assert.deepStrictEqual(result, null)
   })
 })
+
+describe('most likes', () => {
+  test('of the bigger list is correct', () => {
+    const result = listHelper.mostLikes(biggerListOfBlogs)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 })
+  })
+  test('of the small list is correct', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 5 })
+  })
+
+  test('of the empty list is correct', () => {
+    const result = listHelper.mostLikes([])
+    assert.deepStrictEqual(result, null)
+  })
+})
