@@ -1,4 +1,4 @@
-import Button from "./Button";
+import Button from './Button'
 
 const Persons = (props) => {
   return (
@@ -9,16 +9,16 @@ const Persons = (props) => {
         )
         .map((person) => (
           <p key={person.name}>
-            {person.name} {person.number}{" "}
+            {person.name} {person.number}{' '}
             <Button
               id="deleteButton"
-              text={"delete"}
+              text={'delete'}
               onClick={() => props.removePerson(person.id)}
             ></Button>
           </p>
         ))}
     </div>
-  );
-};
+  )
+}
 
-export default Persons;
+export default Persons

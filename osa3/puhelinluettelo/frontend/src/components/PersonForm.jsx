@@ -1,17 +1,17 @@
-import Button from "./Button";
+import Button from './Button'
 
 const PersonForm = (props) => {
   return (
     <form onSubmit={props.addNewPerson}>
       <div>
-        name:{" "}
+        name:{' '}
         <input
           value={props.newName}
           onChange={(e) => props.setNewName(e.target.value)}
         />
       </div>
       <div>
-        number:{" "}
+        number:{' '}
         <input
           value={props.newNumber}
           onChange={(e) => props.setNewNumber(e.target.value)}
@@ -21,7 +21,7 @@ const PersonForm = (props) => {
         <Button type="submit" text="add" />
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default PersonForm;
+export default PersonForm
