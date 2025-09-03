@@ -72,6 +72,18 @@ const App = () => {
               )
             );
             setNotificationMessage(`Updated ${newName}`, false);
+          })
+          .catch((error) => {
+            if (error.response && error.response.data) {
+              console.log(error.response.data);
+              setNotificationMessage(
+                error.response.data.error || error.response.data,
+                true
+              );
+            } else {
+              console.error(error.message);
+              setNotificationMessage("An unexpected error occurred", true);
+            }
           });
       }
     }
