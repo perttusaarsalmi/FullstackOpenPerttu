@@ -109,8 +109,7 @@ describe('updating of the blog', () => {
       title: 'höpöhöpö',
       author: 'Michael Chan',
       url: 'höpöhöpö.org',
-      likes: 11,
-      __v: 0,
+      likes: 11
     }
 
     await api
@@ -135,8 +134,7 @@ describe('updating of the blog', () => {
       title: 'höpöhöpö',
       author: 'Michael Chan',
       url: 'höpöhöpö.org',
-      likes: 11,
-      __v: 0,
+      likes: 11
     }
 
     await api.put(`/api/blogs/${id}`).send(updatedBlog).expect(400)
@@ -148,8 +146,7 @@ describe('updating of the blog', () => {
       title: '',
       author: 'Michael Chan',
       url: 'höpöhöpö.org',
-      likes: 11,
-      __v: 0,
+      likes: 11
     }
     await api.put(`/api/blogs/${blogsAtStart[0].id}`).send(updatedBlog1).expect(400)
     blogsAtStart.id
@@ -158,8 +155,7 @@ describe('updating of the blog', () => {
       title: 'höpöhöpö',
       author: 'Michael Chan',
       url: '',
-      likes: 11,
-      __v: 0,
+      likes: 11
     }
     await api.put(`/api/blogs/${blogsAtStart[0].id}`).send(updatedBlog2).expect(400)
   })
