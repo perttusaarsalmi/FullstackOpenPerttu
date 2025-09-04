@@ -55,6 +55,35 @@ describe('addition of a new blog', () => {
     const contents = blogsAtEnd.map((n) => n.title)
     assert(contents.includes('Pertun blogi'))
   })
+  test('the value of the likes is zero if not given in POST', async () => {
+    const newBlog = {
+      title: 'Pertun blogi 2',
+      author: 'Perttu Saarsalmi',
+      url: 'höpöhöpö2.org',
+      likes: null,
+    }
+    await api.post('/api/blogs').send(newBlog)
+    const addedBlog = (await helper.blogsInDb()).find(
+      (blog) => blog.title === 'Pertun blogi 2'
+    )
+    assert.strictEqual(addedBlog.likes, 0)
+  })
+  test('adding a new blog without url or title throws bad request error', async () => {
+    const newBlog = {
+      title: '',
+      author: 'Perttu Saarsalmi',
+      url: 'höpöhöpö2.org',
+      likes: null,
+    }
+    await api.post('/api/blogs').send(newBlog).expect(400)
+    const anotherBlog = {
+      title: 'Pertun blogi 3',
+      author: 'Perttu Saarsalmi',
+      url: '',
+      likes: null,
+    }
+    await api.post('/api/blogs').send(anotherBlog).expect(400)
+  })
 })
 
 after(async () => {
