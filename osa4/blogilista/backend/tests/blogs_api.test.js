@@ -52,8 +52,8 @@ describe('addition of a new blog', () => {
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.biggerListOfBlogs.length + 1)
 
-    const contents = blogsAtEnd.map((n) => n.title)
-    assert(contents.includes('Pertun blogi'))
+    const titles = blogsAtEnd.map((n) => n.title)
+    assert(titles.includes('Pertun blogi'))
   })
   test('the value of the likes is zero if not given in POST', async () => {
     const newBlog = {
@@ -83,6 +83,85 @@ describe('addition of a new blog', () => {
       likes: null,
     }
     await api.post('/api/blogs').send(anotherBlog).expect(400)
+  })
+})
+
+describe('Deletion of an existing blog', () => {
+  test('succeeds with status code 204 if id is valid ', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+    const blogsAtEnd = await helper.blogsInDb()
+
+    const titles = blogsAtEnd.map((n) => n.title)
+    assert(!titles.includes(blogToDelete.title))
+
+    assert.strictEqual(blogsAtEnd.length, helper.biggerListOfBlogs.length - 1)
+  })
+})
+
+describe('updating of the blog', () => {
+  test('succeeds with valid id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const id = blogsAtStart[0].id
+    const updatedBlog = {
+      _id: id,
+      title: 'höpöhöpö',
+      author: 'Michael Chan',
+      url: 'höpöhöpö.org',
+      likes: 11,
+      __v: 0,
+    }
+
+    await api
+      .put(`/api/blogs/${id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.biggerListOfBlogs.length)
+
+    const searchedUpdatedBlog = (await helper.blogsInDb()).find(
+      (blog) => blog.title === 'höpöhöpö'
+    )
+    assert.strictEqual(searchedUpdatedBlog.likes, 11)
+    assert.strictEqual(searchedUpdatedBlog.url, 'höpöhöpö.org')
+  })
+  test('fails with invalid id', async () => {
+    const id = '123'
+    const updatedBlog = {
+      _id: id,
+      title: 'höpöhöpö',
+      author: 'Michael Chan',
+      url: 'höpöhöpö.org',
+      likes: 11,
+      __v: 0,
+    }
+
+    await api.put(`/api/blogs/${id}`).send(updatedBlog).expect(400)
+  })
+  test('fails if title or url are missing', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const updatedBlog1 = {
+      _id: blogsAtStart[0].id,
+      title: '',
+      author: 'Michael Chan',
+      url: 'höpöhöpö.org',
+      likes: 11,
+      __v: 0,
+    }
+    await api.put(`/api/blogs/${blogsAtStart[0].id}`).send(updatedBlog1).expect(400)
+    blogsAtStart.id
+    const updatedBlog2 = {
+      _id: blogsAtStart[0].id,
+      title: 'höpöhöpö',
+      author: 'Michael Chan',
+      url: '',
+      likes: 11,
+      __v: 0,
+    }
+    await api.put(`/api/blogs/${blogsAtStart[0].id}`).send(updatedBlog2).expect(400)
   })
 })
 
