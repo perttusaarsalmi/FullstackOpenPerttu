@@ -1,3 +1,5 @@
+const Blog = require('../models/blog')
+
 const biggerListOfBlogs = [
   {
     _id: '5a422a851b54a676234d17f7',
@@ -49,6 +51,11 @@ const biggerListOfBlogs = [
   },
 ]
 
+const blogsInDb = async () => {
+  const blogs = await Blog.find({})
+  return blogs.map(note => note.toJSON())
+}
+
 module.exports = {
-  biggerListOfBlogs
+  biggerListOfBlogs, blogsInDb
 }
