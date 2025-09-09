@@ -11,10 +11,7 @@ usersRouter.post('/', async (request, response, next) => {
   const { username, name, password } = request.body
 
   if (!password || password.length < 3) {
-    return response.status(400).json({
-      error:
-        'Password is required and it should be at least three characters long',
-    })
+    return response.status(400).json({ error: 'Password is required and it should be at least three characters long' })
   }
 
   const saltRounds = 10
@@ -30,16 +27,7 @@ usersRouter.post('/', async (request, response, next) => {
     const savedUser = await user.save()
     response.status(201).json(savedUser)
   } catch (error) {
-    if (error.name === 'MongoServerError' && error.code === 11000) {
-      // Handle duplicate username error
-      return response.status(400).json({ error: 'Username must be unique' })
-    } else if (error.name === 'ValidationError') {
-      // Handle validation errors
-      return response.status(400).json({ error: error.message })
-    } else {
-      // Handle other unknown errors
-      return response.status(500).json({ error: 'An unknown error occurred' })
-    }
+    next(error) // Pass other errors to the error middleware
   }
 })
 
