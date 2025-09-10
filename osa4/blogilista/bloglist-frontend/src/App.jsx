@@ -1,89 +1,105 @@
-import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
-import Button from "./components/Button";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
+import { useState, useEffect } from 'react'
+import Blog from './components/Blog'
+import Button from './components/Button'
+import Notification from './components/Notification'
+import blogService from './services/blogs'
+import loginService from './services/login'
+import './index.css'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [newBlogTitle, setNewBlogTitle] = useState("");
-  const [newBlogAuthor, setNewBlogAuthor] = useState("");
-  const [newBlogUrl, setNewBlogUrl] = useState("");
-
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  const [blogs, setBlogs] = useState([])
+  const [newBlogTitle, setNewBlogTitle] = useState('')
+  const [newBlogAuthor, setNewBlogAuthor] = useState('')
+  const [newBlogUrl, setNewBlogUrl] = useState('')
+  const [notification, setNotification] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser");
+    blogService.getAll().then((blogs) => setBlogs(blogs))
+  }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
     }
-  }, []);
+  }, [])
 
   const addBlog = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     const blogObject = {
       title: newBlogTitle,
       author: newBlogAuthor,
       url: newBlogUrl,
-    };
+    }
 
-    blogService.create(blogObject).then(() => {
-      blogService.getAll().then((updatedBlogs) => {
-        setBlogs(updatedBlogs); // Refresh the blogs list
-        setNewBlogTitle("");
-        setNewBlogAuthor("");
-        setNewBlogUrl("");
-      });
-    });
-  };
+    blogService
+      .create(blogObject)
+      .then(() => {
+        blogService.getAll().then((updatedBlogs) => {
+          setBlogs(updatedBlogs) // Refresh the blogs list
+          setNotificationMessage(`a new blog ${newBlogTitle} by ${newBlogAuthor} added`)
+          setNewBlogTitle('')
+          setNewBlogAuthor('')
+          setNewBlogUrl('')
+        })
+      })
+      .catch((error) => {
+        setNotificationMessage(
+          error.response.data.error || error.response.data,
+          true
+        )
+      })
+  }
 
   const handleLogin = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password });
-      window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
-      setUsername("");
-      setPassword("");
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
+      setUsername('')
+      setPassword('')
     } catch {
-      setErrorMessage("wrong credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      setNotificationMessage('wrong credentials', true)
     }
-  };
+  }
 
   const handleBlogTitleChange = (event) => {
-    setNewBlogTitle(event.target.value);
-  };
+    setNewBlogTitle(event.target.value)
+  }
 
   const handleBlogAuthorChange = (event) => {
-    setNewBlogAuthor(event.target.value);
-  };
+    setNewBlogAuthor(event.target.value)
+  }
 
   const handleBlogUrlChange = (event) => {
-    setNewBlogUrl(event.target.value);
-  };
+    setNewBlogUrl(event.target.value)
+  }
 
   const logoutUser = async () => {
-    window.localStorage.removeItem("loggedNoteappUser");
-    window.location.reload();
-  };
+    window.localStorage.removeItem('loggedNoteappUser')
+    window.location.reload()
+  }
+
+  const setNotificationMessage = (message, isError) => {
+    setNotification({ text: message, isError: isError })
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
+  }
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log into application</h2>
+      {notification && <Notification notification={notification} />}
       <div>
         <label>
           username
@@ -106,7 +122,7 @@ const App = () => {
       </div>
       <button type="submit">login</button>
     </form>
-  );
+  )
 
   const blogForm = () => (
     <form onSubmit={addBlog}>
@@ -114,7 +130,7 @@ const App = () => {
         title: <input value={newBlogTitle} onChange={handleBlogTitleChange} />
       </div>
       <div>
-        author:{" "}
+        author:{' '}
         <input value={newBlogAuthor} onChange={handleBlogAuthorChange} />
       </div>
       <div>
@@ -122,7 +138,7 @@ const App = () => {
       </div>
       <button type="submit">create</button>
     </form>
-  );
+  )
 
   return (
     <div>
@@ -130,11 +146,12 @@ const App = () => {
       {user && (
         <div>
           <h2>blogs</h2>
+          {notification && <Notification notification={notification} />}
           <div>
-            {`${user.name} logged in`}{" "}
+            {`${user.name} logged in`}{' '}
             <Button
               id="logoutButton"
-              text={"logout"}
+              text={'logout'}
               onClick={() => logoutUser()}
             ></Button>
             {blogForm()}
@@ -148,7 +165,7 @@ const App = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
