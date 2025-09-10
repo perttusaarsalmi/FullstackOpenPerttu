@@ -114,6 +114,15 @@ describe('addition of a new blog', () => {
       .send(anotherBlog)
       .expect(400)
   })
+  test('adding a new blog without valid token throws 401 error', async () => {
+    const newBlog = {
+      title: '',
+      author: 'Perttu Saarsalmi',
+      url: 'höpöhöpö2.org',
+      likes: null,
+    }
+    await api.post('/api/blogs').send(newBlog).expect(401)
+  })
 })
 
 describe('Deletion of an existing blog', () => {
