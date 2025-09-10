@@ -1,5 +1,8 @@
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const supertest = require('supertest')
+const app = require('../app') // Import your app
+const api = supertest(app) // Create a supertest instance
 
 const biggerListOfBlogs = [
   {
@@ -77,6 +80,14 @@ const usersInDb = async () => {
   return testUsers.map(user => user.toJSON())
 }
 
+const testloginAndGetToken = async () => {
+  const response = await api
+    .post('/api/login')
+    .send({ username: 'testuser', password: 'testpassword' })
+    .expect(200)
+  return response.body.token // Assuming the token is returned in `response.body.token`
+}
+
 module.exports = {
-  biggerListOfBlogs, blogsInDb, usersInDb, testUsers
+  biggerListOfBlogs, blogsInDb, usersInDb, testUsers, testloginAndGetToken
 }
