@@ -1,14 +1,9 @@
 import blogService from '../services/blogs'
 
-const BlogForm = ({
-
-  setBlogs,
-  useState,
-  setNotificationMessage
-}) => {
-      const [newBlogTitle, setNewBlogTitle] = useState('')
-      const [newBlogAuthor, setNewBlogAuthor] = useState('')
-      const [newBlogUrl, setNewBlogUrl] = useState('')
+const BlogForm = ({ setBlogs, useState, setNotificationMessage }) => {
+  const [newBlogTitle, setNewBlogTitle] = useState('')
+  const [newBlogAuthor, setNewBlogAuthor] = useState('')
+  const [newBlogUrl, setNewBlogUrl] = useState('')
   const addBlog = (event) => {
     event.preventDefault()
     const blogObject = {
