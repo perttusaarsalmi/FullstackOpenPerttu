@@ -18,7 +18,7 @@ const BlogForm = ({
     }
 
     blogService
-      .create(blogObject)
+      .createBlog(blogObject)
       .then(() => {
         blogService.getAll().then((updatedBlogs) => {
           setBlogs(updatedBlogs) // Refresh the blogs list

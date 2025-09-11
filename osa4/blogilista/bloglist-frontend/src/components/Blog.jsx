@@ -2,7 +2,7 @@ import Button from './Button'
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const Blog = ({ blog, blogs, setBlogs, user }) => {
   const blogStyle = {
     marginTop: 10,
     paddingTop: 10,
@@ -23,13 +23,22 @@ const Blog = ({ blog, blogs, setBlogs }) => {
 
   const updateBlogLikes = () => {
     const updatedBlog = { ...blog, likes: likes + 1 }
-    blogService.update(updatedBlog).then(() => {
+    blogService.updateBlog(updatedBlog).then(() => {
       setLikes(likes + 1)
-            const updatedBlogs = blogs.map((b) =>
+      const updatedBlogs = blogs.map((b) =>
         b.id === updatedBlog.id ? updatedBlog : b
       )
       setBlogs(updatedBlogs)
     })
+  }
+
+  const deleteBlog = () => {
+    if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
+      blogService.deleteBlog(blog.id).then(() => {
+        const updatedBlogs = blogs.filter((b) => b.id !== blog.id) // Remove the deleted blog
+        setBlogs(updatedBlogs) // Update the blogs state
+      })
+    }
   }
 
   return (
@@ -50,6 +59,9 @@ const Blog = ({ blog, blogs, setBlogs }) => {
           {likes} <Button onClick={updateBlogLikes} text={'like'}></Button>
         </div>
         <div>{blog.user.name}</div>
+        {blog.user.id == user.id && (
+          <Button onClick={deleteBlog} text={'remove'}></Button>
+        )}
       </div>
     </div>
   )

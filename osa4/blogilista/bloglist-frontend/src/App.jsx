@@ -35,9 +35,15 @@ const App = () => {
 
     try {
       const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
+      const decodedToken = JSON.parse(atob(user.token.split('.')[1]))
+      const userWithId = { ...user, id: decodedToken.id }
+
+      window.localStorage.setItem(
+        'loggedNoteappUser',
+        JSON.stringify(userWithId)
+      )
       blogService.setToken(user.token)
-      setUser(user)
+      setUser(userWithId)
       setUsername('')
       setPassword('')
     } catch {
@@ -89,10 +95,16 @@ const App = () => {
             </Togglable>
           </div>
           {blogs
-            .filter((blog) => blog.user.username === user.username)
+            .filter((blog) => blog.user.id === user.id)
             .sort((a, b) => b.likes - a.likes) // Sort blogs by likes in descending order
             .map((blog) => (
-              <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs}/>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                blogs={blogs}
+                setBlogs={setBlogs}
+                user={user}
+              />
             ))}
         </div>
       )}
