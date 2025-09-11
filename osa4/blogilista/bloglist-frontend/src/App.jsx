@@ -80,17 +80,14 @@ const App = () => {
               text={'logout'}
               onClick={() => logoutUser()}
             ></Button>
-            {
-              <Togglable buttonLabel="create new blog">
-                <BlogForm
-                  setBlogs={setBlogs}
-                  useState={useState}
-                  setNotificationMessage={setNotificationMessage}
-                ></BlogForm>
-              </Togglable>
-            }
+            <Togglable buttonLabel="create new blog">
+              <BlogForm
+                setBlogs={setBlogs}
+                useState={useState}
+                setNotificationMessage={setNotificationMessage}
+              ></BlogForm>
+            </Togglable>
           </div>
-          <br></br>
           {blogs
             .filter((blog) => blog.user.username === user.username)
             .map((blog) => (
