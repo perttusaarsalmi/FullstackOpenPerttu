@@ -42,28 +42,30 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <div style={hideWhenVisible}>
-        {blog.title} {blog.author}{' '}
-        <Button onClick={() => toggleVisibility()} text={'view'}></Button>
+<div style={blogStyle}>
+  <div>
+    {blog.title} {blog.author}{' '}
+    <Button
+      onClick={toggleVisibility}
+      text={visible ? 'hide' : 'view'}
+    />
+  </div>
+
+  {visible && (
+    <div>
+      <a href={blog.url} target="_blank" rel="noopener noreferrer">
+        {blog.url}
+      </a>
+      <div>
+        {likes} <Button onClick={updateBlogLikes} text="like" />
       </div>
-      <div style={showWhenVisible}>
-        <div>
-          {blog.title} {blog.author}{' '}
-          <Button onClick={toggleVisibility} text={'hide'}></Button>
-        </div>
-        <a href={blog.url} target="_blank" rel="noopener noreferrer">
-          {blog.url}
-        </a>
-        <div>
-          {likes} <Button onClick={updateBlogLikes} text={'like'}></Button>
-        </div>
-        <div>{blog.user.name}</div>
-        {blog.user.id === user.id && (
-          <Button onClick={deleteBlog} text={'remove'}></Button>
-        )}
-      </div>
+      <div>{blog.user.name}</div>
+      {blog.user.id === user.id && (
+        <Button onClick={deleteBlog} text="remove" />
+      )}
     </div>
+  )}
+</div>
   )
 }
 
