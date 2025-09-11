@@ -2,7 +2,7 @@ import Button from './Button'
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, blogs, setBlogs }) => {
   const blogStyle = {
     marginTop: 10,
     paddingTop: 10,
@@ -22,9 +22,13 @@ const Blog = ({ blog }) => {
   }
 
   const updateBlogLikes = () => {
-    const updatedBlog = { ...blog, likes: likes + 1 } // Create a new object with updated likes
+    const updatedBlog = { ...blog, likes: likes + 1 }
     blogService.update(updatedBlog).then(() => {
-      setLikes(likes + 1) // Update the local state to trigger re-render
+      setLikes(likes + 1)
+            const updatedBlogs = blogs.map((b) =>
+        b.id === updatedBlog.id ? updatedBlog : b
+      )
+      setBlogs(updatedBlogs)
     })
   }
 
