@@ -1,4 +1,6 @@
 const { test, beforeEach, describe, expect } = require('@playwright/test')
+const { loginWith } = require('./helper')
+const { createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -22,21 +24,32 @@ describe('Blog app', () => {
     await expect(passwordElement).toBeVisible()
   })
   describe('Login', () => {
-    test('succeeds with correct credentials', async ({ page }) => {
-      await page.getByRole('button', { name: 'login' }).click()
-      await page.getByLabel('username').fill('saarper')
-      await page.getByLabel('password').fill('Blastbeat666')
-      await page.getByRole('button', { name: 'login' }).click()
-      await expect(page.getByText('Perttu Saarsalmi logged in')).toBeVisible()
-    })
-
     test('fails with wrong password', async ({ page }) => {
-      await page.getByRole('button', { name: 'login' }).click()
-      await page.getByLabel('username').fill('saarper')
-      await page.getByLabel('password').fill('wrong')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'saarper', 'wrong')
 
       await expect(page.getByText('wrong credentials')).toBeVisible()
+    })
+    test('succeeds with correct credentials', async ({ page }) => {
+      await loginWith(page, 'saarper', 'Blastbeat666')
+
+      await expect(page.getByText('Perttu Saarsalmi logged in')).toBeVisible()
+    })
+  })
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'saarper', 'Blastbeat666')
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      const createNewButton = page.getByRole('button', { name: 'create new' })
+      await expect(createNewButton).toBeVisible()
+      await createNewButton.click()
+      await createBlog(page, 'Test title', 'Test Author', 'test.com') 
+      const submitElement = page.getByRole('button', { name: 'create' })
+      await submitElement.click()
+      await expect(page.getByText('a new blog Test title by Test Author added')).toBeVisible()
+      const blogLementOnList = page.getByText('Test title Test Author')
+      expect(blogLementOnList).toBeVisible()
     })
   })
 })
