@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import BlogForm from './BlogForm'
 import { expect } from 'vitest'
-import blogService from '../services/blogs'
 
 test('renders content', () => {
   const blog = {
@@ -73,7 +73,7 @@ test('pressing the view button will show more info', async () => {
 
 test('pressing the like button twice calls the event handler twice', async () => {
   const blog = {
-    title: 'testTitle4',
+    title: 'testTitle3',
     author: 'PS',
     url: 'https://fi.wikipedia.org/wiki/Ohjelmointi',
     likes: 2,
@@ -105,4 +105,31 @@ test('pressing the like button twice calls the event handler twice', async () =>
   await userMock.click(likeButton)
 
   expect(mockHandler.mock.calls).toHaveLength(2)
+})
+
+test('calls the callback function with correct data when a new blog is created', async () => {
+  const mockCreateBlog = vi.fn() // Mockataan createBlog-funktio
+
+  render(<BlogForm addBlog={mockCreateBlog} />)
+
+  const user = userEvent.setup()
+
+  const titleInput = screen.getByPlaceholderText('Enter title')
+  const authorInput = screen.getByPlaceholderText('Enter author')
+  const urlInput = screen.getByPlaceholderText('Enter URL')
+
+  await user.type(titleInput, 'Test Blog Title')
+  await user.type(authorInput, 'Test Author')
+  await user.type(urlInput, 'https://testblog.com')
+
+  const createButton = screen.getByText('create')
+  await user.click(createButton)
+
+  expect(mockCreateBlog).toHaveBeenCalledTimes(1)
+  expect(mockCreateBlog).toHaveBeenCalledWith(
+    expect.any(Object), // Tämä on event
+    'Test Blog Title',
+    'Test Author',
+    'https://testblog.com'
+  )
 })

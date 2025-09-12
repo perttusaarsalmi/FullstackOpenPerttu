@@ -72,6 +72,32 @@ const App = () => {
     setBlogs(updatedBlogs)
   }
 
+  const addBlog = (event, newBlogTitle, newBlogAuthor, newBlogUrl) => {
+    event.preventDefault()
+    const blogObject = {
+      title: newBlogTitle,
+      author: newBlogAuthor,
+      url: newBlogUrl,
+    }
+
+    blogService
+      .createBlog(blogObject)
+      .then(() => {
+        blogService.getAll().then((updatedBlogs) => {
+          setBlogs(updatedBlogs) // Refresh the blogs list
+          setNotificationMessage(
+            `a new blog ${newBlogTitle} by ${newBlogAuthor} added`
+          )
+        })
+      })
+      .catch((error) => {
+        setNotificationMessage(
+          error.response.data.error || error.response.data,
+          true
+        )
+      })
+  }
+
   return (
     <div>
       {!user && (
@@ -97,9 +123,7 @@ const App = () => {
             ></Button>
             <Togglable buttonLabel="create new blog">
               <BlogForm
-                setBlogs={setBlogs}
-                useState={useState}
-                setNotificationMessage={setNotificationMessage}
+                addBlog={addBlog}
               ></BlogForm>
             </Togglable>
           </div>
