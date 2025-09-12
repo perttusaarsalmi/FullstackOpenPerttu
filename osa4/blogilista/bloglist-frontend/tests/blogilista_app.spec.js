@@ -70,5 +70,27 @@ describe('Blog app', () => {
       const likesAfter = page.getByText('likes 1')
       await expect(likesAfter).toBeVisible()
     })
+    test.only('a blog can be deleted by the user who added it', async ({
+      page,
+    }) => {
+      const createNewButton = page.getByRole('button', { name: 'create new' })
+      await createNewButton.click()
+      await createBlog(page, 'Test title', 'Test Author', 'test.com')
+      const submitElement = page.getByRole('button', { name: 'create' })
+      await submitElement.click()
+      const viewButton = page.getByRole('button', { name: 'view' })
+      await viewButton.click()
+      const removeButton = page.getByRole('button', { name: 'remove' })
+      await expect(removeButton).toBeVisible()
+      page.once('dialog', async (dialog) => {
+        expect(dialog.type()).toBe('confirm')
+        expect(dialog.message()).toBe(
+          'Remove blog "Test title" by Test Author?'
+        )
+        await dialog.accept()
+      })
+      await removeButton.click()
+      await expect(page.getByText('Test title Test Author')).toHaveCount(0)
+    })
   })
 })
