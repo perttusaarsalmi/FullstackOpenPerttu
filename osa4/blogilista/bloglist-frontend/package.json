@@ -2,13 +2,15 @@
   "name": "bloglist-frontend",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:playwright": "playwright test",
+     "test:playwright:report": "playwright show-report"
+    
   },
   "dependencies": {
     "axios": "^1.7.9",
