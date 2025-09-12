@@ -40,7 +40,7 @@ const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
             {blog.url}
           </a>
           <div>
-            {blog.likes} <Button onClick={() => onLike(blog)} text="like" />
+            likes {blog.likes} <Button onClick={() => onLike(blog)} text="like" />
           </div>
           <div>{blog.user.name}</div>
           {blog.user.id === user.id && (
