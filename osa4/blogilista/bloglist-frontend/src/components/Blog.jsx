@@ -14,8 +14,6 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
 
   const [likes, setLikes] = useState(blog.likes)
   const [visible, setVisible] = useState(false)
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)
