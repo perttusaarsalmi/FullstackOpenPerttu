@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 import { expect } from 'vitest'
+import blogService from '../services/blogs'
 
 test('renders content', () => {
   const blog = {
@@ -39,7 +40,7 @@ test('renders content', () => {
   expect(screen.queryByText(blog.user.name)).toBeNull()
 })
 
-test('renders content', async () => {
+test('pressing the view button will show more info', async () => {
   const blog = {
     title: 'testTitle2',
     author: 'PS',
@@ -68,4 +69,40 @@ test('renders content', async () => {
   expect(screen.getByText(blog.url)).toBeVisible()
   expect(screen.getByText(`${blog.likes}`)).toBeVisible()
   expect(screen.getByText(blog.user.name)).toBeVisible()
+})
+
+test('pressing the like button twice calls the event handler twice', async () => {
+  const blog = {
+    title: 'testTitle4',
+    author: 'PS',
+    url: 'https://fi.wikipedia.org/wiki/Ohjelmointi',
+    likes: 2,
+    user: {
+      username: 'PerttuS',
+      name: 'superUser',
+      id: '68c02202ead2e43840efc74f',
+    },
+    id: '68c2adc9f10af560f98cf9e4',
+  }
+
+  const user = {
+    username: 'PerttuS',
+    name: 'superUser',
+    id: '68c02202ead2e43840efc74f',
+  }
+
+  const mockHandler = vi.fn()
+
+  render(<Blog blog={blog} user={user} onLike={mockHandler} />)
+
+  const userMock = userEvent.setup()
+
+  const viewButton = screen.getByText('view')
+  await userMock.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await userMock.click(likeButton)
+  await userMock.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
 })

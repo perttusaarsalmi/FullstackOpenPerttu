@@ -63,6 +63,15 @@ const App = () => {
     }, 5000)
   }
 
+  const handleLike = async (blog) => {
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
+    await blogService.updateBlog(updatedBlog)
+    const updatedBlogs = blogs.map((b) =>
+      b.id === updatedBlog.id ? updatedBlog : b
+    )
+    setBlogs(updatedBlogs)
+  }
+
   return (
     <div>
       {!user && (
@@ -104,6 +113,7 @@ const App = () => {
                 blogs={blogs}
                 setBlogs={setBlogs}
                 user={user}
+                onLike={handleLike}
               />
             ))}
         </div>
