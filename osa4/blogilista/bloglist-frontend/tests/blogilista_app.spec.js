@@ -70,9 +70,7 @@ describe('Blog app', () => {
       const likesAfter = page.getByText('likes 1')
       await expect(likesAfter).toBeVisible()
     })
-    test.only('a blog can be deleted by the user who added it', async ({
-      page,
-    }) => {
+    test('a blog can be deleted by the user who added it', async ({ page }) => {
       const createNewButton = page.getByRole('button', { name: 'create new' })
       await createNewButton.click()
       await createBlog(page, 'Test title', 'Test Author', 'test.com')
@@ -91,6 +89,55 @@ describe('Blog app', () => {
       })
       await removeButton.click()
       await expect(page.getByText('Test title Test Author')).toHaveCount(0)
+    })
+
+    test('only the user who added the blog sees the remove button', async ({
+      page,
+      request,
+    }) => {
+      // Käyttäjä 1 luo blogin
+      const createNewButton = page.getByRole('button', { name: 'create new' })
+      await createNewButton.click()
+      await createBlog(page, 'Test title', 'Test Author', 'test.com')
+      const submitElement = page.getByRole('button', { name: 'create' })
+      await submitElement.click()
+
+      // Varmistetaan, että blogi on lisätty
+      const blogElement = page.getByText('Test title Test Author')
+      await expect(blogElement).toBeVisible()
+
+      // Näytetään blogin tiedot
+      const viewButton = page.getByRole('button', { name: 'view' })
+      await viewButton.click()
+
+      // Varmistetaan, että poistonappi näkyy käyttäjälle 1
+      const removeButton = page.getByRole('button', { name: 'remove' })
+      await expect(removeButton).toBeVisible()
+
+      // Kirjaudutaan ulos
+      const logoutButton = page.getByRole('button', { name: 'logout' })
+      await logoutButton.click()
+
+      await request.post('http://localhost:3002/api/users', {
+        data: {
+          name: 'Käyttäjä2',
+          username: 'kayttaja2',
+          password: '12345',
+        },
+      })
+
+      // Käyttäjä 2 kirjautuu sisään
+      await page.getByLabel('username').fill('kayttaja2')
+      await page.getByLabel('password').fill('12345')
+      const loginButton = page.getByRole('button', { name: 'login' })
+      await loginButton.click()
+
+      // Näytetään blogin tiedot käyttäjälle 2
+      const viewButtonUser2 = page.getByRole('button', { name: 'view' })
+      await viewButtonUser2.click()
+
+      // Varmistetaan, että poistonappi ei näy käyttäjälle 2
+      await expect(page.getByRole('button', { name: 'remove' })).toHaveCount(0)
     })
   })
 })

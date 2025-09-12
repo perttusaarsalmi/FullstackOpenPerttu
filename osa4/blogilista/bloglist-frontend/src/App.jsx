@@ -128,7 +128,6 @@ const App = () => {
             </Togglable>
           </div>
           {blogs
-            .filter((blog) => blog.user.id === user.id)
             .sort((a, b) => b.likes - a.likes) // Sort blogs by likes in descending order
             .map((blog) => (
               <Blog
