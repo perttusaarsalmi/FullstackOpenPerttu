@@ -12,7 +12,7 @@ describe('Blog app', () => {
         password: 'Blastbeat666',
       },
     })
-    test.setTimeout(10000) // Asetetaan aikarajaksi 10 sekuntia
+    test.setTimeout(10000)
     await page.goto('http://localhost:5173')
   })
   test('Login form is shown', async ({ page }) => {
@@ -95,29 +95,19 @@ describe('Blog app', () => {
       page,
       request,
     }) => {
-      // Käyttäjä 1 luo blogin
       const createNewButton = page.getByRole('button', { name: 'create new' })
       await createNewButton.click()
       await createBlog(page, 'Test title', 'Test Author', 'test.com')
       const submitElement = page.getByRole('button', { name: 'create' })
       await submitElement.click()
-
-      // Varmistetaan, että blogi on lisätty
       const blogElement = page.getByText('Test title Test Author')
       await expect(blogElement).toBeVisible()
-
-      // Näytetään blogin tiedot
       const viewButton = page.getByRole('button', { name: 'view' })
       await viewButton.click()
-
-      // Varmistetaan, että poistonappi näkyy käyttäjälle 1
       const removeButton = page.getByRole('button', { name: 'remove' })
       await expect(removeButton).toBeVisible()
-
-      // Kirjaudutaan ulos
       const logoutButton = page.getByRole('button', { name: 'logout' })
       await logoutButton.click()
-
       await request.post('http://localhost:3002/api/users', {
         data: {
           name: 'Käyttäjä2',
@@ -125,19 +115,48 @@ describe('Blog app', () => {
           password: '12345',
         },
       })
-
-      // Käyttäjä 2 kirjautuu sisään
       await page.getByLabel('username').fill('kayttaja2')
       await page.getByLabel('password').fill('12345')
       const loginButton = page.getByRole('button', { name: 'login' })
       await loginButton.click()
-
-      // Näytetään blogin tiedot käyttäjälle 2
       const viewButtonUser2 = page.getByRole('button', { name: 'view' })
       await viewButtonUser2.click()
-
-      // Varmistetaan, että poistonappi ei näy käyttäjälle 2
       await expect(page.getByRole('button', { name: 'remove' })).toHaveCount(0)
+    })
+
+    test('blogs are ordered by likes in descending order', async ({ page }) => {
+      // create blogs
+      await page.getByRole('button', { name: 'create new blog' }).click()
+      await createBlog(page, 'Blog 1', 'Author 1', 'url1.com')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      await createBlog(page, 'Blog 2', 'Author 2', 'url2.com')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      await createBlog(page, 'Blog 3', 'Author 3', 'url3.com')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      const blogs = page.locator('.blog')
+      const blog1 = blogs.filter({ hasText: 'Blog 1 Author 1' })
+      const blog2 = blogs.filter({ hasText: 'Blog 2 Author 2' })
+      const blog3 = blogs.filter({ hasText: 'Blog 3 Author 3' })
+
+      await blog1.getByRole('button', { name: 'view' }).click()
+      await blog2.getByRole('button', { name: 'view' }).click()
+      await blog3.getByRole('button', { name: 'view' }).click()
+
+      for (let i = 0; i < 3; i++) {
+        await blog1.getByRole('button', { name: 'like' }).click()
+      }
+      for (let i = 0; i < 6; i++) {
+        await blog2.getByRole('button', { name: 'like' }).click()
+      }
+      await blog3.getByRole('button', { name: 'like' }).click()
+
+      const blogTexts = await blogs.allTextContents()
+      expect(blogTexts[0]).toContain('Blog 2 Author 2')
+      expect(blogTexts[1]).toContain('Blog 1 Author 1')
+      expect(blogTexts[2]).toContain('Blog 3 Author 3')
     })
   })
 })
