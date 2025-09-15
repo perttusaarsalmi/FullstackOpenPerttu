@@ -1,3 +1,4 @@
+import AnecdoteFilter from './components/AnecdoteFilter'
 import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 
