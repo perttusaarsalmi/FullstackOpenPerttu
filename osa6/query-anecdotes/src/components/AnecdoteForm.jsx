@@ -1,27 +1,37 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useContext } from 'react'
+import NotificationContext from '../NotificationContext'
 import axios from 'axios'
 
 const AnecdoteForm = () => {
   const queryClient = useQueryClient()
+  const { notification, setNotification } = useContext(NotificationContext)
 
-  const createAnecdote = (newAnecdote) =>
-    axios
-      .post('http://localhost:3002/anecdotes', newAnecdote)
-      .then((res) => res.data)
+  const createAnecdote = async (newAnecdote) => {
+    if (newAnecdote.content.trim().length < 5) {
+      throw new Error('too short anecdote, must have length 5 or more')
+    }
+
+    const response = await axios.post(
+      'http://localhost:3002/anecdotes',
+      newAnecdote
+    )
+    return response.data
+  }
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+      setNotification(`Anecdote "${data.content}" created`)
+    },
+    onError: (error) => {
+      setNotification(error.message)
     },
   })
 
   const onCreate = (event) => {
     event.preventDefault()
-    if (event.target.anecdote.value.trim().length < 5) {
-      alert('Anecdote must be at least 5 characters long')
-      return
-    }
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
     newAnecdoteMutation.mutate({ content, votes: 0 })
