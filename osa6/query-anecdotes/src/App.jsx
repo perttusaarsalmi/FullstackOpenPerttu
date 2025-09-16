@@ -1,30 +1,46 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
 const App = () => {
+  const queryClient = useQueryClient()
+
   const handleVote = (anecdote) => {
-    console.log('vote')
+    voteMutation.mutate(anecdote)
   }
 
-  const result = useQuery({
-    queryKey: ['notes'],
+  const getResult = useQuery({
+    queryKey: ['anecdotes'],
     queryFn: () =>
       axios.get('http://localhost:3002/anecdotes').then((res) => res.data),
-      retry: false,
+    retry: false,
   })
-  console.log(JSON.parse(JSON.stringify(result)))
 
-  if (result.isLoading) {
+  const voteMutation = useMutation({
+    mutationFn: (anecdote) =>
+      axios
+        .put(`http://localhost:3002/anecdotes/${anecdote.id}`, {
+          ...anecdote,
+          votes: anecdote.votes + 1,
+        })
+        .then((res) => res.data),
+    onSuccess: (updatedAnecdote) => {
+      queryClient.setQueryData(['anecdotes'], (oldData) =>
+        oldData.map((a) => (a.id === updatedAnecdote.id ? updatedAnecdote : a))
+      )
+    },
+  })
+
+  if (getResult.isLoading) {
     return <div>loading data...</div>
   }
 
-  if (result.isError) {
+  if (getResult.isError) {
     return <div>anecdote service not available due to problems in server</div>
   }
 
-  const anecdotes = result.data
+  const anecdotes = getResult.data
 
   return (
     <div>
