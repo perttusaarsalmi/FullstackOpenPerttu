@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Route, Routes, Link } from 'react-router-dom'
+import { Route, Routes, Link, useParams, useNavigate } from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -10,8 +10,11 @@ const Menu = () => {
       <Link style={padding} to="/">
         anecdotes
       </Link>
-      <Link style={padding} to="/createNew
-">
+      <Link
+        style={padding}
+        to="/create
+"
+      >
         create new
       </Link>
       <Link style={padding} to="/about">
@@ -26,7 +29,10 @@ const AnecdoteList = ({ anecdotes }) => (
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>{anecdote.content}</li>
+        <li key={anecdote.id}>
+          {' '}
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
       ))}
     </ul>
   </div>
@@ -65,11 +71,18 @@ const Footer = () => (
   </div>
 )
 
+const Notification = ({ message }) =>
+  message ? (
+    <div style={{ border: '1px solid #444', padding: 8, marginBottom: 12 }}>
+      {message}
+    </div>
+  ) : null
+
 const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const navigate = useNavigate()
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
@@ -78,6 +91,8 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     })
+    props.showNotification(content)
+    navigate('/') // uudelleenohjaus juureen
   }
 
   return (
@@ -134,6 +149,13 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
 
+  const showNotification = (content) => {
+    setNotification(`Anekdootti "${content}" lisätty onnistuneesti!`)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
+  }
+
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
@@ -152,19 +174,44 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)))
   }
 
+  const Anecdote = ({ anecdotes }) => {
+    const id = useParams().id
+    const anecdote = anecdotes.find((n) => n.id === Number(id))
+    if (!anecdote) return <div>Not found</div>
+    return (
+      <div>
+        <h2>{anecdote.content}</h2>
+        <div>has {anecdote.votes} votes</div>
+        <br></br>
+        <div>
+          for more info see{' '}
+          <a href={anecdote.info} target="_blank" rel="noopener noreferrer">
+            {anecdote.info}
+          </a>
+        </div>
+        <br></br>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification message={notification} />
+
       <Routes>
         <Route
-          path="/"
-          element={<AnecdoteList anecdotes={anecdotes} />}
+          path="/anecdotes/:id"
+          element={<Anecdote anecdotes={anecdotes} />}
         />
+        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />}></Route>
         <Route
-          path="/createNew"
-          element={<CreateNew addNew={addNew} />}
+          path="/create"
+          element={
+            <CreateNew addNew={addNew} showNotification={showNotification} />
+          }
         ></Route>
       </Routes>
       <Footer />
