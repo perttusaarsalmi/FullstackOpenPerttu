@@ -97,6 +97,12 @@ const CreateNew = (props) => {
   const author = useField('text')
   const info = useField('text')
 
+  const handleReset = () => {
+    content.clear()
+    author.clear()
+    info.clear()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
@@ -114,6 +120,9 @@ const CreateNew = (props) => {
           <input {...info} />
         </div>
         <button>create</button>
+        <button type="button" onClick={handleReset}>
+          reset
+        </button>
       </form>
     </div>
   )
