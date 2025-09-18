@@ -11,14 +11,15 @@ import './index.css'
 import BlogForm from './components/BlogForm'
 import { setNotificationWithTimeout } from './reducers/notificationReducer'
 import { setBlogs, updateBlog, addNewBlog } from './reducers/blogReducer'
+import { setUser, clearUser } from './reducers/userReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const dispatch = useDispatch()
   const notification = useSelector((state) => state.notifications)
   const blogs = useSelector((state) => state.blogs)
+  const user = useSelector((state) => state.user)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -30,7 +31,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
@@ -48,7 +49,7 @@ const App = () => {
         JSON.stringify(userWithId)
       )
       blogService.setToken(user.token)
-      setUser(userWithId)
+      dispatch(setUser(userWithId))
       setUsername('')
       setPassword('')
     } catch {
@@ -57,6 +58,7 @@ const App = () => {
   }
 
   const logoutUser = async () => {
+    dispatch(clearUser())
     window.localStorage.removeItem('loggedNoteappUser')
     window.location.reload()
   }
@@ -107,13 +109,12 @@ const App = () => {
           setUsername={setUsername}
           setPassword={setPassword}
           handleLogin={handleLogin}
-          notification={notification}
         />
       )}
       {user && (
         <div>
           <h2>blogs</h2>
-          {notification && <Notification notification={notification} />}
+          {notification && <Notification/>}
           <div>
             {`${user.name} logged in`}{' '}
             <Button
@@ -128,7 +129,7 @@ const App = () => {
           {[...blogs]
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
-              <Blog key={blog.id} blog={blog} user={user} onLike={handleLike} />
+              <Blog key={blog.id} blog={blog} onLike={handleLike} />
             ))}
         </div>
       )}

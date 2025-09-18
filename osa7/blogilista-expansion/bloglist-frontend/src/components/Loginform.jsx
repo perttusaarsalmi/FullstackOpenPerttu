@@ -1,4 +1,5 @@
 import Notification from './Notification'
+import { useSelector } from 'react-redux'
 
 const LoginForm = ({
   username,
@@ -6,8 +7,9 @@ const LoginForm = ({
   setUsername,
   setPassword,
   handleLogin,
-  notification,
 }) => {
+
+  const notification = useSelector(state => state.notifications)
   return (
     <form onSubmit={handleLogin}>
       <h2>Log into application</h2>

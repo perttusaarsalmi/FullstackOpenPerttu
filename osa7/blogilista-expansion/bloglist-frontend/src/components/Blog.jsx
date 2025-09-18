@@ -4,8 +4,7 @@ import Button from './Button'
 import blogService from '../services/blogs'
 import { setBlogs } from '../reducers/blogReducer'
 
-
-const Blog = ({ blog, user, onLike }) => {
+const Blog = ({ blog, onLike }) => {
   const blogStyle = {
     marginTop: 10,
     paddingTop: 10,
@@ -14,6 +13,7 @@ const Blog = ({ blog, user, onLike }) => {
     borderWidth: 1,
     marginBottom: 5,
   }
+  const user = useSelector((state) => state.user)
 
   const dispatch = useDispatch()
   const blogs = useSelector((state) => state.blogs)
