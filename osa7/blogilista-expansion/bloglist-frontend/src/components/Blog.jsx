@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Button from './Button'
 import blogService from '../services/blogs'
+import { setBlogs } from '../reducers/blogReducer'
 
-const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
+
+const Blog = ({ blog, user, onLike }) => {
   const blogStyle = {
     marginTop: 10,
     paddingTop: 10,
@@ -11,6 +14,9 @@ const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
     borderWidth: 1,
     marginBottom: 5,
   }
+
+  const dispatch = useDispatch()
+  const blogs = useSelector((state) => state.blogs)
 
   const [visible, setVisible] = useState(false)
 
@@ -22,7 +28,7 @@ const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
     if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
       blogService.deleteBlog(blog.id).then(() => {
         const updatedBlogs = blogs.filter((b) => b.id !== blog.id) // Remove the deleted blog
-        setBlogs(updatedBlogs)
+        dispatch(setBlogs(updatedBlogs))
       })
     }
   }
@@ -40,7 +46,8 @@ const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
             {blog.url}
           </a>
           <div>
-            likes {blog.likes} <Button onClick={() => onLike(blog)} text="like" />
+            likes {blog.likes}{' '}
+            <Button onClick={() => onLike(blog)} text="like" />
           </div>
           <div>{blog.user.name}</div>
           {blog.user.id === user.id && (

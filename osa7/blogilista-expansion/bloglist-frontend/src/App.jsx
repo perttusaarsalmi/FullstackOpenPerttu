@@ -10,18 +10,21 @@ import loginService from './services/login'
 import './index.css'
 import BlogForm from './components/BlogForm'
 import { setNotificationWithTimeout } from './reducers/notificationReducer'
+import { setBlogs, updateBlog, addNewBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const dispatch = useDispatch()
   const notification = useSelector((state) => state.notifications)
+  const blogs = useSelector((state) => state.blogs)
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    blogService.getAll().then((blogs) => {
+      dispatch(setBlogs(blogs))
+    })
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -61,10 +64,7 @@ const App = () => {
   const handleLike = async (blog) => {
     const updatedBlog = { ...blog, likes: blog.likes + 1 }
     await blogService.updateBlog(updatedBlog)
-    const updatedBlogs = blogs.map((b) =>
-      b.id === updatedBlog.id ? updatedBlog : b
-    )
-    setBlogs(updatedBlogs)
+    dispatch(updateBlog(updatedBlog))
   }
 
   const addBlog = (event, newBlogTitle, newBlogAuthor, newBlogUrl) => {
@@ -77,17 +77,15 @@ const App = () => {
 
     blogService
       .createBlog(blogObject)
-      .then(() => {
-        blogService.getAll().then((updatedBlogs) => {
-          setBlogs(updatedBlogs)
-          dispatch(
-            setNotificationWithTimeout(
-              `a new blog ${newBlogTitle} by ${newBlogAuthor} added`,
-              false,
-              5
-            )
+      .then((createdBlog) => {
+        dispatch(addNewBlog({ ...createdBlog, user }))
+        dispatch(
+          setNotificationWithTimeout(
+            `a new blog ${newBlogTitle} by ${newBlogAuthor} added`,
+            false,
+            5
           )
-        })
+        )
       })
       .catch((error) => {
         dispatch(
@@ -127,17 +125,10 @@ const App = () => {
               <BlogForm addBlog={addBlog}></BlogForm>
             </Togglable>
           </div>
-          {blogs
+          {[...blogs]
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                blogs={blogs}
-                setBlogs={setBlogs}
-                user={user}
-                onLike={handleLike}
-              />
+              <Blog key={blog.id} blog={blog} user={user} onLike={handleLike} />
             ))}
         </div>
       )}
