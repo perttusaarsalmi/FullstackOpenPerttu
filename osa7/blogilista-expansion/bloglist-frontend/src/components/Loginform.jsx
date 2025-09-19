@@ -1,5 +1,6 @@
 import Notification from './Notification'
 import { useSelector } from 'react-redux'
+import { Form, Button } from 'react-bootstrap'
 
 const LoginForm = ({
   username,
@@ -11,7 +12,7 @@ const LoginForm = ({
 
   const notification = useSelector(state => state.notifications)
   return (
-    <form onSubmit={handleLogin}>
+    <Form onSubmit={handleLogin}>
       <h2>Log into application</h2>
       {notification && <Notification notification={notification} />}
       <div>
@@ -34,8 +35,8 @@ const LoginForm = ({
           />
         </label>
       </div>
-      <button type="submit">login</button>
-    </form>
+      <Button type="submit">login</Button>
+    </Form>
   )
 }
 

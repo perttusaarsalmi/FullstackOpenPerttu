@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
-import Button from './components/Button'
 import Notification from './components/Notification'
 import LoginForm from './components/Loginform'
 import blogService from './services/blogs'
@@ -16,6 +15,7 @@ import User from './components/User'
 import { setUsers } from './reducers/userListReducer'
 import userService from './services/users'
 import Blog from './components/Blog'
+import { Button } from 'react-bootstrap'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -78,7 +78,7 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <div className="container">
         {!user && (
           <LoginForm
             username={username}
@@ -104,11 +104,9 @@ const App = () => {
                 users
               </Link>
               <span style={{ marginRight: '10px' }}>{user.name} logged in</span>
-              <Button
-                id="logoutButton"
-                text={'logout'}
-                onClick={() => logoutUser()}
-              />
+              <Button id="logoutButton" variant="secondary" onClick={() => logoutUser()}>
+                logout
+              </Button>
             </nav>
             <h2>blog app</h2>
             {notification && <Notification />}

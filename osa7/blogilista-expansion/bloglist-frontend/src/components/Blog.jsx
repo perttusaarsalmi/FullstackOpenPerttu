@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
-import Button from './Button'
 import blogService from '../services/blogs'
 import { setBlogs, updateBlog } from '../reducers/blogReducer'
 import CommentForm from './CommentForm'
+import { Button } from 'react-bootstrap'
 
 const Blog = () => {
   const dispatch = useDispatch()
@@ -44,11 +44,11 @@ const Blog = () => {
         </a>
         <div>
           likes {blog.likes}{' '}
-          <Button onClick={() => handleLike(blog)} text="like" />
+          <Button onClick={() => handleLike(blog)}>like</Button>
         </div>
         <div>added by {blog.user.name}</div>
         {blog.user.id === user.id && (
-          <Button onClick={deleteBlog} text="remove" />
+          <Button onClick={deleteBlog} variant="secondary">remove</Button>
         )}
       </div>
       <h3>comments</h3>

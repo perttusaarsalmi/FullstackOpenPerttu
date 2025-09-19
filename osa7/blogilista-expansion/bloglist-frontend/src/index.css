@@ -1,17 +1,7 @@
-.notification {
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
+.btn {
+  margin: 4px 0;
 }
 
-
-.errorMessage {
-  color: red;
-}
-
-.successMessage {
-    color: green;
+input {
+  margin: 4px 0;
 }
