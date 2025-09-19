@@ -6,10 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:playwright": "playwright test",
-    "test:playwright:report": "playwright show-report"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
