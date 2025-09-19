@@ -15,7 +15,7 @@ import User from './components/User'
 import { setUsers } from './reducers/userListReducer'
 import userService from './services/users'
 import Blog from './components/Blog'
-import { Button } from 'react-bootstrap'
+import { Button, Navbar, Nav } from 'react-bootstrap'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -90,25 +90,34 @@ const App = () => {
         )}
         {user && (
           <div>
-            <nav
-              style={{
-                padding: '10px',
-                background: '#eee',
-                marginBottom: '20px',
-              }}
-            >
-              <Link to="/" style={{ marginRight: '10px' }}>
-                blogs
-              </Link>
-              <Link to="/users" style={{ marginRight: '10px' }}>
-                users
-              </Link>
-              <span style={{ marginRight: '10px' }}>{user.name} logged in</span>
-              <Button id="logoutButton" variant="secondary" onClick={() => logoutUser()}>
-                logout
-              </Button>
-            </nav>
-            <h2>blog app</h2>
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+              <Navbar.Toggle aria-controls="responsive-navbar-nav" style={{ marginLeft: '8px' }}  />
+              <Navbar.Collapse id="responsive-navbar-nav">
+                <Nav className="mr-auto">
+                  <Nav.Link as={Link} to="/">
+                    blogs
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/users">
+                    users
+                  </Nav.Link>
+                  <Nav.Link
+                    as="span"
+                    style={{ color: 'white', marginRight: '10px' }}
+                  >
+                    {user.name} logged in
+                  </Nav.Link>
+                  <Button
+                    id="logoutButton"
+                    className="logout-button"
+                    variant="secondary"
+                    onClick={() => logoutUser()}
+                  >
+                    logout
+                  </Button>
+                </Nav>
+              </Navbar.Collapse>
+            </Navbar>
+            <h1>blog app</h1>
             {notification && <Notification />}
             <Routes>
               <Route path="/" element={<BlogsPage />} />

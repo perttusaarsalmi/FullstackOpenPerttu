@@ -1,7 +1,15 @@
 .btn {
-  margin: 4px 0;
+  margin: 4px 4px 4px 0;
 }
 
 input {
-  margin: 4px 0;
+  margin: 4px 4px 4px 0;
+}
+
+.nav-link {
+  padding: 8px 12px;
+}
+
+.logout-button {
+  margin: 4px !important;
 }
