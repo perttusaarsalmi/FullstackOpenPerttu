@@ -90,19 +90,28 @@ const App = () => {
         )}
         {user && (
           <div>
-            <h2>blogs</h2>
+            <nav
+              style={{
+                padding: '10px',
+                background: '#eee',
+                marginBottom: '20px',
+              }}
+            >
+              <Link to="/" style={{ marginRight: '10px' }}>
+                blogs
+              </Link>
+              <Link to="/users" style={{ marginRight: '10px' }}>
+                users
+              </Link>
+              <span style={{ marginRight: '10px' }}>{user.name} logged in</span>
+              <Button
+                id="logoutButton"
+                text={'logout'}
+                onClick={() => logoutUser()}
+              />
+            </nav>
+            <h2>blog app</h2>
             {notification && <Notification />}
-            <div>
-              {`${user.name} logged in`}{' '}
-              <div>
-                <br></br>
-                <Button
-                  id="logoutButton"
-                  text={'logout'}
-                  onClick={() => logoutUser()}
-                ></Button>
-              </div>
-            </div>
             <Routes>
               <Route path="/" element={<BlogsPage />} />
               <Route path="/users" element={<UsersPage />} />
