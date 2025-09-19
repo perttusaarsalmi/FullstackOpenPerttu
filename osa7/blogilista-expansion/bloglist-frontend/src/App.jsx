@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
 import Button from './components/Button'
 import Notification from './components/Notification'
 import LoginForm from './components/Loginform'
@@ -10,15 +9,15 @@ import loginService from './services/login'
 import './index.css'
 import BlogForm from './components/BlogForm'
 import { setNotificationWithTimeout } from './reducers/notificationReducer'
-import { setBlogs, updateBlog, addNewBlog } from './reducers/blogReducer'
+import { setBlogs, addNewBlog } from './reducers/blogReducer'
 import { setUser, clearUser } from './reducers/userReducer'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
   const notification = useSelector((state) => state.notifications)
-  const blogs = useSelector((state) => state.blogs)
   const user = useSelector((state) => state.user)
 
   useEffect(() => {
@@ -63,11 +62,7 @@ const App = () => {
     window.location.reload()
   }
 
-  const handleLike = async (blog) => {
-    const updatedBlog = { ...blog, likes: blog.likes + 1 }
-    await blogService.updateBlog(updatedBlog)
-    dispatch(updateBlog(updatedBlog))
-  }
+
 
   const addBlog = (event, newBlogTitle, newBlogAuthor, newBlogUrl) => {
     event.preventDefault()
@@ -126,11 +121,7 @@ const App = () => {
               <BlogForm addBlog={addBlog}></BlogForm>
             </Togglable>
           </div>
-          {[...blogs]
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog key={blog.id} blog={blog} onLike={handleLike} />
-            ))}
+          <BlogList></BlogList>
         </div>
       )}
     </div>
