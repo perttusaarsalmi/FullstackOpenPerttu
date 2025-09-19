@@ -15,6 +15,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import User from './components/User'
 import { setUsers } from './reducers/userListReducer'
 import userService from './services/users'
+import Blog from './components/Blog'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -38,7 +39,7 @@ const App = () => {
     }
   }, [])
 
-    useEffect(() => {
+  useEffect(() => {
     userService.getAll().then((users) => {
       dispatch(setUsers(users))
     })
@@ -50,7 +51,11 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
       const decodedToken = JSON.parse(atob(user.token.split('.')[1]))
-      const userWithId = { ...user, id: decodedToken.id, blogs: user.blogs || [] }
+      const userWithId = {
+        ...user,
+        id: decodedToken.id,
+        blogs: user.blogs || [],
+      }
 
       window.localStorage.setItem(
         'loggedNoteappUser',
@@ -96,13 +101,13 @@ const App = () => {
                   text={'logout'}
                   onClick={() => logoutUser()}
                 ></Button>
-                
               </div>
             </div>
             <Routes>
               <Route path="/" element={<BlogsPage />} />
               <Route path="/users" element={<UsersPage />} />
-                  <Route path="/users/:id" element={<User />} />
+              <Route path="/users/:id" element={<User />} />
+              <Route path="/blogs/:id" element={<Blog />}></Route>
             </Routes>
           </div>
         )}

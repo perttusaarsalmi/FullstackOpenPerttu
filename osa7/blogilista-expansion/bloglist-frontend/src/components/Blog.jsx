@@ -1,27 +1,21 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams, useNavigate } from 'react-router-dom'
 import Button from './Button'
 import blogService from '../services/blogs'
-import { setBlogs } from '../reducers/blogReducer'
+import { setBlogs, updateBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, onLike }) => {
-  const blogStyle = {
-    marginTop: 10,
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-  const user = useSelector((state) => state.user)
-
+const Blog = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const user = useSelector((state) => state.user)
+  const id = useParams().id
   const blogs = useSelector((state) => state.blogs)
+  const blog = blogs.find((n) => n.id === id)
 
-  const [visible, setVisible] = useState(false)
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
+  const handleLike = async (blog) => {
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
+    await blogService.updateBlog(updatedBlog)
+    dispatch(updateBlog(updatedBlog))
   }
 
   const deleteBlog = () => {
@@ -29,32 +23,33 @@ const Blog = ({ blog, onLike }) => {
       blogService.deleteBlog(blog.id).then(() => {
         const updatedBlogs = blogs.filter((b) => b.id !== blog.id) // Remove the deleted blog
         dispatch(setBlogs(updatedBlogs))
+        navigate('/')
       })
     }
   }
 
-  return (
-    <div style={blogStyle} className="blog">
-      <div>
-        {blog.title} {blog.author}{' '}
-        <Button onClick={toggleVisibility} text={visible ? 'hide' : 'view'} />
-      </div>
+  if (!blog) {
+    return null
+  }
 
-      {visible && (
+  return (
+    <div className="blog">
+      <h2>
+        {blog.title} {blog.author}{' '}
+      </h2>
+      <div>
+        <a href={blog.url} target="_blank" rel="noopener noreferrer">
+          {blog.url}
+        </a>
         <div>
-          <a href={blog.url} target="_blank" rel="noopener noreferrer">
-            {blog.url}
-          </a>
-          <div>
-            likes {blog.likes}{' '}
-            <Button onClick={() => onLike(blog)} text="like" />
-          </div>
-          <div>{blog.user.name}</div>
-          {blog.user.id === user.id && (
-            <Button onClick={deleteBlog} text="remove" />
-          )}
+          likes {blog.likes}{' '}
+          <Button onClick={() => handleLike(blog)} text="like" />
         </div>
-      )}
+        <div>added by {blog.user.name}</div>
+        {blog.user.id === user.id && (
+          <Button onClick={deleteBlog} text="remove" />
+        )}
+      </div>
     </div>
   )
 }
