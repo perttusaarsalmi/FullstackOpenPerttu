@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import Button from './Button'
 import blogService from '../services/blogs'
 import { setBlogs, updateBlog } from '../reducers/blogReducer'
+import CommentForm from './CommentForm'
 
 const Blog = () => {
   const dispatch = useDispatch()
@@ -50,6 +51,15 @@ const Blog = () => {
           <Button onClick={deleteBlog} text="remove" />
         )}
       </div>
+      <h3>comments</h3>
+      <CommentForm blog={blog}></CommentForm>
+      {blog?.comments?.length > 0 && (
+        <ul>
+          {blog.comments.map((comment, idx) => (
+            <li key={idx}>{comment}</li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
