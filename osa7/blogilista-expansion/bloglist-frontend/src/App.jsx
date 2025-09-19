@@ -12,6 +12,9 @@ import { setUser, clearUser } from './reducers/userReducer'
 import BlogsPage from './components/BlogsPage'
 import UsersPage from './components/UsersPage'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import User from './components/User'
+import { setUsers } from './reducers/userListReducer'
+import userService from './services/users'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -35,13 +38,19 @@ const App = () => {
     }
   }, [])
 
+    useEffect(() => {
+    userService.getAll().then((users) => {
+      dispatch(setUsers(users))
+    })
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
       const user = await loginService.login({ username, password })
       const decodedToken = JSON.parse(atob(user.token.split('.')[1]))
-      const userWithId = { ...user, id: decodedToken.id }
+      const userWithId = { ...user, id: decodedToken.id, blogs: user.blogs || [] }
 
       window.localStorage.setItem(
         'loggedNoteappUser',
@@ -93,6 +102,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<BlogsPage />} />
               <Route path="/users" element={<UsersPage />} />
+                  <Route path="/users/:id" element={<User />} />
             </Routes>
           </div>
         )}
