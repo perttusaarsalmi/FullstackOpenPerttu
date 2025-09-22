@@ -17,7 +17,7 @@ interface ExerciseValues {
 }
 
 const parseArguments = (args: string[]): ExerciseValues => {
-  if (args.length < 4) throw new Error('Not enough arguments') // target + vähintään 1 päivä
+  if (args.length < 4) throw new Error('Not enough arguments')
   
   const target = Number(args[2])
   if (isNotNumber(args[2])) {
