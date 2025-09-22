@@ -1,3 +1,5 @@
+import { isNotNumber } from "./utils";
+
 interface BMIValues {
   height: number
   weight: number
@@ -7,7 +9,7 @@ const parseArguments = (args: string[]): BMIValues => {
   if (args.length < 4) throw new Error('Not enough arguments')
   if (args.length > 4) throw new Error('Too many arguments')
 
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
+  if (!isNotNumber(args[2]) && !isNotNumber(args[3])) {
     return {
       height: Number(args[2]),
       weight: Number(args[3]),
