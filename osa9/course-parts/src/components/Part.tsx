@@ -26,7 +26,7 @@ const Part = ({ part }: { part: CoursePart }) => {
             {part.name} {part.exerciseCount}
           </b>
           <br />
-          Project exercises: {part.groupProjectCount}
+          project exercises {part.groupProjectCount}
         </p>
       );
 
@@ -39,7 +39,7 @@ const Part = ({ part }: { part: CoursePart }) => {
           <br />
           <i>{part.description}</i>
           <br />
-          Material:{' '}
+          submit to{' '}
           <a href={part.backgroundMaterial}>{part.backgroundMaterial}</a>
         </p>
       );
@@ -53,7 +53,7 @@ const Part = ({ part }: { part: CoursePart }) => {
           <br />
           <i>{part.description}</i>
           <br />
-          Required skills: {part.requirements.join(', ')}
+          required skills: {part.requirements.join(', ')}
         </p>
       );
 
