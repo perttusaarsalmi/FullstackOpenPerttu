@@ -3,9 +3,12 @@ import diaryService from './services/diraryService';
 import type { Diary, NewDiaryEntry, Visibility, Weather } from './types';
 import DiaryList from './components/DiaryList';
 import DiaryForm from './components/DiaryForm';
+import './index.css';
+import { AxiosError } from 'axios';
 
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
+  const [notification, setNotification] = useState<string>('');
 
   useEffect(() => {
     const fetchDiaries = async () => {
@@ -13,7 +16,9 @@ const App = () => {
         const data = await diaryService.getAll();
         setDiaries(data);
       } catch (error) {
-        console.error('Error fetching diaries:', error);
+        setNotificationMessage(
+          error instanceof Error ? error.message : String(error)
+        );
       }
     };
     fetchDiaries();
@@ -39,13 +44,36 @@ const App = () => {
         setDiaries([...diaries, newDiary]);
       })
       .catch((error) => {
-        console.log(error);
+        let message = 'Unknown error';
+        if (error instanceof AxiosError && error.response?.data) {
+          if (typeof error.response.data === 'string') {
+            message = error.response.data.replace(
+              /^Something went wrong\./,
+              ''
+            );
+          } else {
+            message = JSON.stringify(error.response.data);
+          }
+        } else {
+          message = String(error);
+        }
+        setNotificationMessage(message);
       });
+  };
+
+  const setNotificationMessage = (message: string) => {
+    setNotification(message);
+    setTimeout(() => {
+      setNotification('');
+    }, 5000);
   };
 
   return (
     <div>
-      <DiaryForm addNewDiary={addNewDiary}></DiaryForm>
+      <DiaryForm
+        addNewDiary={addNewDiary}
+        notification={notification}
+      ></DiaryForm>
       <DiaryList diaries={diaries}></DiaryList>
     </div>
   );

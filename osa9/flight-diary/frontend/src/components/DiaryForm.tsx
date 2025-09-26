@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import type { Visibility, Weather } from '../types';
+import Notification from './Notification';
 
 const DiaryForm = (props: {
   addNewDiary: (
@@ -10,6 +11,7 @@ const DiaryForm = (props: {
     newDiaryWeather: Weather,
     newDiaryComment: string
   ) => void;
+  notification: string;
 }) => {
   const [newDiaryDate, setNewDiaryDate] = useState<string>('');
   const [newDiaryVisibility, setNewDiaryVisibility] = useState<Visibility>();
@@ -18,6 +20,10 @@ const DiaryForm = (props: {
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
+    if (!newDiaryVisibility || !newDiaryWeather) {
+      alert('Please fill in both visibility and weather fields.');
+      return;
+    }
     props.addNewDiary(
       event,
       newDiaryDate,
@@ -34,6 +40,10 @@ const DiaryForm = (props: {
   return (
     <div>
       <h2>Add new entry</h2>
+      {props.notification && (
+        <Notification notification={{ text: props.notification }} />
+      )}
+
       <Form onSubmit={handleSubmit}>
         <div>
           date{' '}
