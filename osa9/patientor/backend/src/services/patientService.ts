@@ -17,7 +17,7 @@ const getEntries = (): NonSensitivePatientEntry[] => {
 const getPatient = (props: { id: string }): Patient | undefined => {
   const patient = patients.find((patient) => patient.id === props.id);
   if (!patient) return undefined;
-  return { ...patient, entries: [] };
+  return { ...patient };
 };
 
 const addPatient = (entry: NewPatientEntry): Patient => {
