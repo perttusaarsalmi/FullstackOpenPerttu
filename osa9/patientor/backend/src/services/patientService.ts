@@ -14,14 +14,21 @@ const getEntries = (): NonSensitivePatientEntry[] => {
   }));
 };
 
+const getPatient = (props: { id: string }): Patient | undefined => {
+  const patient = patients.find((patient) => patient.id === props.id);
+  if (!patient) return undefined;
+  return { ...patient, entries: [] };
+};
+
 const addPatient = (entry: NewPatientEntry): Patient => {
   const id = uuid();
-  const newPatientEntry: Patient = { id, ...entry };
+  const newPatientEntry: Patient = { id, ...entry, entries: [] };
   patients.push(newPatientEntry);
   return newPatientEntry;
 };
 
 export default {
   getEntries,
+  getPatient,
   addPatient,
 };
