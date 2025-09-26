@@ -48,35 +48,55 @@ const DiaryForm = (props: {
         <div>
           date{' '}
           <input
-            placeholder="yyyy-mm-dd"
-            value={newDiaryDate}
+            type="date"
+            id="start"
+            name="trip-start"
+            value={newDiaryDate} // <-- use state here!
+            min="1900-01-01"
+            max="2025-12-31"
             onChange={(event) => setNewDiaryDate(event.target.value)}
           />
         </div>
         <div>
           visibility{' '}
-          <input
-            placeholder="Enter visibility information"
-            value={newDiaryVisibility ?? ''}
-            onChange={(event) =>
-              setNewDiaryVisibility(event.target.value as Visibility)
-            }
-          />
+          {(['great', 'good', 'ok', 'poor'] as Visibility[]).map((option) => (
+            <label key={option}>
+              <input
+                type="radio"
+                name="visibility"
+                value={option}
+                checked={newDiaryVisibility === option}
+                onChange={(event) =>
+                  setNewDiaryVisibility(event.target.value as Visibility)
+                }
+              />
+              {option}
+            </label>
+          ))}
         </div>
         <div>
           weather{' '}
-          <input
-            placeholder="Enter weather information"
-            value={newDiaryWeather ?? ''}
-            onChange={(event) =>
-              setNewDiaryWeather(event.target.value as Weather)
-            }
-          />
+          {(['sunny', 'rainy', 'cloudy', 'stormy', 'windy'] as Weather[]).map(
+            (option) => (
+              <label key={option}>
+                <input
+                  type="radio"
+                  name="weather"
+                  value={option}
+                  checked={newDiaryWeather === option}
+                  onChange={(event) =>
+                    setNewDiaryWeather(event.target.value as Weather)
+                  }
+                />
+                {option}
+              </label>
+            )
+          )}
         </div>
         <div>
           comment{' '}
           <input
-            placeholder="New diary comment"
+            placeholder="Write a comment"
             value={newDiaryComment}
             onChange={(event) => setNewDiaryComment(event.target.value)}
           />
