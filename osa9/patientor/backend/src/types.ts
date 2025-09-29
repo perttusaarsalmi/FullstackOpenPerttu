@@ -14,13 +14,14 @@ export interface BaseEntry {
   diagnosisCodes?: Array<Diagnose['code']>;
 }
 export interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
+  type: 'Hospital';
   discharge: {
     date: string;
     criteria: string;
   };
-}export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: "OccupationalHealthcare";
+}
+export interface OccupationalHealthcareEntry extends BaseEntry {
+  type: 'OccupationalHealthcare';
   employerName: string;
   sickLeave?: {
     startDate: string;
@@ -29,7 +30,7 @@ export interface HospitalEntry extends BaseEntry {
 }
 
 export interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
+  type: 'HealthCheck';
   healthCheckRating: HealthCheckRating;
 }
 
@@ -38,11 +39,13 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
-  export enum HealthCheckRating {
-  "Healthy" = 0,
-  "LowRisk" = 1,
-  "HighRisk" = 2,
-  "CriticalRisk" = 3
+export type NewEntry = Omit<Entry, 'id'>;
+
+export enum HealthCheckRating {
+  'Healthy' = 0,
+  'LowRisk' = 1,
+  'HighRisk' = 2,
+  'CriticalRisk' = 3,
 }
 
 export type NewPatientEntry = z.infer<typeof newEntrySchema>;
