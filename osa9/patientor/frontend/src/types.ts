@@ -60,4 +60,6 @@ export type Entry =
   "CriticalRisk" = 3
 }
 
+export type NewEntry = Omit<Entry, 'id'>;
+
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
