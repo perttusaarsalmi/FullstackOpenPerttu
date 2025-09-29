@@ -31,9 +31,8 @@ const PatientPage = () => {
       {patient?.entries.map((entry) => (
         <div key={entry.id} style={{ marginBottom: '1em' }}>
           {'sickLeave' in entry && entry.sickLeave?.startDate && (
-            <div>
-              {entry.sickLeave.startDate} {' '}
-                {entry.description}
+            <div style={{ fontStyle: 'italic' }}>
+              {entry.sickLeave.startDate} {entry.description}
             </div>
           )}
           {/* Diagnosis codes */}
