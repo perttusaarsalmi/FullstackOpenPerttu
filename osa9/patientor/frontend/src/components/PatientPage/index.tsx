@@ -5,6 +5,7 @@ import diagnosisService from '../../services/diagnoses';
 import { useParams } from 'react-router-dom';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
+import EntryDetails from '../EntryDetailsComponent';
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -38,22 +39,7 @@ const PatientPage = () => {
       <h3>entries</h3>
       {patient?.entries.map((entry) => (
         <div key={entry.id} style={{ marginBottom: '1em' }}>
-          {'sickLeave' in entry && entry.sickLeave?.startDate && (
-            <div style={{ fontStyle: 'italic' }}>
-              {entry.sickLeave.startDate} {entry.description}
-            </div>
-          )}
-          {/* Diagnosis codes */}
-          {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
-            <ul>
-              {entry.diagnosisCodes.map((code) => (
-                <li key={code}>
-                  {code}{' '}
-                  {diagnoses?.find((diagnosis) => diagnosis.code === code)?.name}
-                </li>
-              ))}
-            </ul>
-          )}
+          <EntryDetails entry={entry} diagnoses={diagnoses}></EntryDetails>
         </div>
       ))}
     </div>
