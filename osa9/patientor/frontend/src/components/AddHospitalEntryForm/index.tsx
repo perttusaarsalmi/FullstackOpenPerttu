@@ -10,12 +10,12 @@ import {
   TextField,
 } from '@mui/material';
 import { NewEntry } from '../../types';
-import { Alert } from '@mui/material';
 import { diagnosisCodes } from '../../utils';
+import { Alert } from '@mui/material';
 
 type Props = {
   onCancel: () => void;
-  onSubmitHealthCheckEntry: (entry: NewEntry) => Promise<void>;
+  onSubmitHospitalEntry: (entry: NewEntry) => Promise<void>;
   notification: string;
 };
 
@@ -26,27 +26,26 @@ const addEntryBoxStyle = {
   marginTop: '1em',
 };
 
-const healthCheckRatingOptions = [
-  { value: 0, label: 'Healthy' },
-  { value: 1, label: 'Low Risk' },
-  { value: 2, label: 'High Risk' },
-];
-
 const diagnosisCodeOptions: string[] = diagnosisCodes();
 
-const AddHealthCheckEntryForm = ({
+const AddHospitalEntryForm = ({
   onCancel,
-  onSubmitHealthCheckEntry,
+  onSubmitHospitalEntry,
   notification,
 }: Props) => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('dd-mm-yyyy');
   const [specialist, setSpecialist] = useState('');
-  const [healthCheckRating, setHealthCheckRating] = useState<number>(0);
   const [selectedDiagnosisCodes, setSelectedDiagnosisCodes] = useState<
     string[]
   >([]);
-
+  const [discharge, setDischarge] = useState<{
+    date: string;
+    criteria: string;
+  }>({
+    date: '',
+    criteria: '',
+  });
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
 
@@ -60,13 +59,18 @@ const AddHealthCheckEntryForm = ({
       return;
     }
 
-    onSubmitHealthCheckEntry({
-      type: 'HealthCheck',
+    if (!discharge.date || !discharge.criteria) {
+      alert('Discharge date and criteria are required.');
+      return;
+    }
+
+    onSubmitHospitalEntry({
+      type: 'Hospital',
       description,
       date,
       specialist,
-      healthCheckRating: Number(healthCheckRating),
       diagnosisCodes: selectedDiagnosisCodes,
+      discharge: discharge.date && discharge.criteria ? discharge : undefined,
     } as NewEntry);
   };
 
@@ -78,7 +82,7 @@ const AddHealthCheckEntryForm = ({
         </Alert>
       )}
       <div style={addEntryBoxStyle}>
-        <h3>New health check entry</h3>
+        <h3>New occupational health care entry</h3>
         <form onSubmit={addEntry}>
           <div style={{ marginBottom: '1em' }}>
             <TextField
@@ -103,25 +107,6 @@ const AddHealthCheckEntryForm = ({
               value={specialist}
               onChange={({ target }) => setSpecialist(target.value)}
             />
-            <InputLabel
-              style={{ marginTop: '1em' }}
-              id="healthCheckRating-label"
-            >
-              Health Check Rating
-            </InputLabel>
-            <Select
-              labelId="healthCheckRating-label"
-              value={healthCheckRating}
-              onChange={(e) => setHealthCheckRating(Number(e.target.value))}
-              fullWidth
-            >
-              {healthCheckRatingOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
-
             <InputLabel id="diagnosisCodes-label" style={{ marginTop: '1em' }}>
               Diagnosis Codes
             </InputLabel>
@@ -144,6 +129,26 @@ const AddHealthCheckEntryForm = ({
                 </MenuItem>
               ))}
             </Select>
+            <TextField
+              label="Discharge date"
+              type="date"
+              fullWidth
+              value={discharge?.date}
+              onChange={(e) =>
+                setDischarge({ ...discharge, date: e.target.value })
+              }
+              InputLabelProps={{ shrink: true }}
+              style={{ marginTop: '1em' }}
+            />
+            <TextField
+              style={{ marginTop: '1em' }}
+              label="Discharge criteria"
+              fullWidth
+              value={discharge?.criteria}
+              onChange={(e) =>
+                setDischarge({ ...discharge, criteria: e.target.value })
+              }
+            />
           </div>
 
           <Grid
@@ -181,4 +186,4 @@ const AddHealthCheckEntryForm = ({
   );
 };
 
-export default AddHealthCheckEntryForm;
+export default AddHospitalEntryForm;

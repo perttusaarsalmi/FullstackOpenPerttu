@@ -50,6 +50,21 @@ const AddOcupationalHealthCareEntryForm = ({
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
 
+    if (!description) {
+      alert('Descriptionis required.');
+      return;
+    }
+
+    if (!specialist) {
+      alert('Specialist is required.');
+      return;
+    }
+
+    if (!employerName) {
+      alert('Employer name is required.');
+      return;
+    }
+
     onSubmitOccupationalHealthCareEntry({
       type: 'OccupationalHealthcare',
       description,

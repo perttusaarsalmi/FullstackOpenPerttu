@@ -9,8 +9,8 @@ import EntryDetails from '../EntryDetailsComponent';
 import AddHealthCheckEntryForm from '../AddHealthCheckEntryForm';
 import { Button } from '@mui/material';
 import { AxiosError } from 'axios';
-import OccupationalHealthcareEntry from '../EntryDetailsComponent/OccupationalHealthCareEntry';
 import AddOcupationalHealthCareEntryForm from '../AddOccupationalHealthCareEntryForm';
+import AddHospitalEntryForm from '../AddHospitalEntryForm';
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +18,8 @@ const PatientPage = () => {
   const [patient, setPatient] = useState<Patient>();
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>();
   const [showHealthCheckEntryForm, setShowHealthCheckEntryForm] =
+    useState(false);
+      const [showHospitalEntryForm, setShowHospitalEntryForm] =
     useState(false);
   const [
     showOccupationalHealthCareEntryForm,
@@ -55,6 +57,7 @@ const PatientPage = () => {
       }
       setShowHealthCheckEntryForm(false);
       setShowOccupationalHealthCareEntryForm(false);
+      setShowHospitalEntryForm(false);
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         const data = error.response?.data;
@@ -116,6 +119,15 @@ const PatientPage = () => {
           notification={notification}
         />
       )}
+            {showHospitalEntryForm && (
+        <AddHospitalEntryForm
+          onCancel={() => setShowHospitalEntryForm(false)}
+          onSubmitHospitalEntry={
+            handleAddEntry
+          }
+          notification={notification}
+        />
+      )}
       <h3>entries</h3>
       {patient?.entries.map((entry) => (
         <div key={entry.id} style={{ marginBottom: '1em' }}>
@@ -140,6 +152,16 @@ const PatientPage = () => {
           style={{ marginTop: '1em', marginLeft: '1em' }}
         >
           Add Occupational Health Care Entry
+        </Button>
+      )}
+            {!showHospitalEntryForm && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setShowHospitalEntryForm(true)}
+          style={{ marginTop: '1em', marginLeft: '1em' }}
+        >
+          Add Hospital Entry
         </Button>
       )}
     </div>
