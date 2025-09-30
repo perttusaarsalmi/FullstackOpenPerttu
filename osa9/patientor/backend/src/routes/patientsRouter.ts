@@ -53,7 +53,7 @@ router.post(
 
 const newEntryParser = (req: Request, _res: Response, next: NextFunction) => {
   try {
-    parseNewPatientEntry(req.body); // validates and throws if invalid
+    parseNewPatientEntry(req.body);
     next();
   } catch (error: unknown) {
     next(error);

@@ -10,8 +10,7 @@ import {
   TextField,
 } from '@mui/material';
 import { NewEntry } from '../../types';
-
-import Notification from '../Notification';
+import { Alert } from '@mui/material';
 
 type Props = {
   onCancel: () => void;
@@ -78,7 +77,7 @@ const AddHealthCheckEntryForm = ({
 
   return (
     <div>
-      {notification && <Notification notification={{ text: notification }} />}
+      {notification && <Alert style={{ marginTop: '1em' }} severity="error">{notification}</Alert>}
       <div style={addEntryBoxStyle}>
         <h4>New health check entry</h4>
         <form onSubmit={addEntry}>

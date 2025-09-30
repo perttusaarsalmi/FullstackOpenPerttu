@@ -8,6 +8,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import EntryDetails from '../EntryDetailsComponent';
 import AddHealthCheckEntryForm from '../AddHealthCheckEntryForm';
 import { Button } from '@mui/material';
+import { AxiosError } from 'axios';
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +16,7 @@ const PatientPage = () => {
   const [patient, setPatient] = useState<Patient>();
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>();
   const [showForm, setShowForm] = useState(false);
+  const [notification, setNotification] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -32,17 +34,52 @@ const PatientPage = () => {
 
   const handleAddHealthCheckEntry = async (newEntry: NewEntry) => {
     if (!id) return;
-    const addedEntry = await patientService.createPatientEntry({
-      id,
-      object: newEntry,
-    });
-    if (patient) {
-      setPatient({
-        ...patient,
-        entries: [...patient.entries, addedEntry],
+    try {
+      const addedEntry = await patientService.createPatientEntry({
+        id,
+        object: newEntry,
       });
+      if (patient) {
+        setPatient({
+          ...patient,
+          entries: [...patient.entries, addedEntry],
+        });
+      }
+      setShowForm(false);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        const data = error.response?.data;
+        if (
+          typeof data === 'object' &&
+          data !== null &&
+          'error' in data &&
+          typeof data.error === 'string'
+        ) {
+          if (data.error.includes('Description is required')) {
+            showNotification('Description is required');
+          } else if (data.error.includes('Specialist is required')) {
+            showNotification('Specialist is required');
+          } else if (data.error.includes('Invalid date')) {
+            showNotification('Invalid date');
+          }else {
+            showNotification(data.error);
+          }
+        } else {
+          showNotification(error.message);
+        }
+      } else {
+        showNotification(
+          'Unknown error happened when creating a new patient entry'
+        );
+      }
     }
-    setShowForm(false);
+  };
+
+  const showNotification = (notificationText: string) => {
+    setNotification(notificationText);
+    setTimeout(() => {
+      setNotification('');
+    }, 5000);
   };
 
   return (
@@ -58,6 +95,7 @@ const PatientPage = () => {
         <AddHealthCheckEntryForm
           onCancel={() => setShowForm(false)}
           onSubmitHealthCheckEntry={handleAddHealthCheckEntry}
+          notification={notification}
         />
       )}
       <h3>entries</h3>
