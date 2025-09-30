@@ -10,12 +10,12 @@ import {
   TextField,
 } from '@mui/material';
 import { NewEntry } from '../../types';
-import { Alert } from '@mui/material';
 import { diagnosisCodes } from '../../utils';
+import { Alert } from '@mui/material';
 
 type Props = {
   onCancel: () => void;
-  onSubmitHealthCheckEntry: (entry: NewEntry) => Promise<void>;
+  onSubmitOccupationalHealthCareEntry: (entry: NewEntry) => Promise<void>;
   notification: string;
 };
 
@@ -26,45 +26,51 @@ const addEntryBoxStyle = {
   marginTop: '1em',
 };
 
-const healthCheckRatingOptions = [
-  { value: 0, label: 'Healthy' },
-  { value: 1, label: 'Low Risk' },
-  { value: 2, label: 'High Risk' },
-];
-
 const diagnosisCodeOptions: string[] = diagnosisCodes();
 
-const AddHealthCheckEntryForm = ({
+const AddOcupationalHealthCareEntryForm = ({
   onCancel,
-  onSubmitHealthCheckEntry,
+  onSubmitOccupationalHealthCareEntry,
   notification,
 }: Props) => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('dd-mm-yyyy');
   const [specialist, setSpecialist] = useState('');
-  const [healthCheckRating, setHealthCheckRating] = useState<number>(0);
+  const [employerName, setEmployerName] = useState('');
   const [selectedDiagnosisCodes, setSelectedDiagnosisCodes] = useState<
     string[]
   >([]);
-
+  const [sickLeave, setSickLeave] = useState<{
+    startDate: string;
+    endDate: string;
+  }>({
+    startDate: '',
+    endDate: '',
+  });
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
 
-    onSubmitHealthCheckEntry({
-      type: 'HealthCheck',
+    onSubmitOccupationalHealthCareEntry({
+      type: 'OccupationalHealthcare',
       description,
       date,
       specialist,
-      healthCheckRating: Number(healthCheckRating),
+      employerName,
       diagnosisCodes: selectedDiagnosisCodes,
+      sickLeave:
+        sickLeave.startDate && sickLeave.endDate ? sickLeave : undefined,
     } as NewEntry);
   };
 
   return (
     <div>
-      {notification && <Alert style={{ marginTop: '1em' }} severity="error">{notification}</Alert>}
+      {notification && (
+        <Alert style={{ marginTop: '1em' }} severity="error">
+          {notification}
+        </Alert>
+      )}
       <div style={addEntryBoxStyle}>
-        <h3>New health check entry</h3>
+        <h3>New occupational health care entry</h3>
         <form onSubmit={addEntry}>
           <div style={{ marginBottom: '1em' }}>
             <TextField
@@ -89,25 +95,13 @@ const AddHealthCheckEntryForm = ({
               value={specialist}
               onChange={({ target }) => setSpecialist(target.value)}
             />
-            <InputLabel
+            <TextField
               style={{ marginTop: '1em' }}
-              id="healthCheckRating-label"
-            >
-              Health Check Rating
-            </InputLabel>
-            <Select
-              labelId="healthCheckRating-label"
-              value={healthCheckRating}
-              onChange={(e) => setHealthCheckRating(Number(e.target.value))}
+              label="Employer"
               fullWidth
-            >
-              {healthCheckRatingOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
-
+              value={employerName}
+              onChange={({ target }) => setEmployerName(target.value)}
+            />
             <InputLabel id="diagnosisCodes-label" style={{ marginTop: '1em' }}>
               Diagnosis Codes
             </InputLabel>
@@ -130,6 +124,28 @@ const AddHealthCheckEntryForm = ({
                 </MenuItem>
               ))}
             </Select>
+            <TextField
+              label="Sick Leave Start Date"
+              type="date"
+              fullWidth
+              value={sickLeave?.startDate}
+              onChange={(e) =>
+                setSickLeave({ ...sickLeave, startDate: e.target.value })
+              }
+              InputLabelProps={{ shrink: true }}
+              style={{ marginTop: '1em' }}
+            />
+            <TextField
+              label="Sick Leave End Date"
+              type="date"
+              fullWidth
+              value={sickLeave?.endDate}
+              onChange={(e) =>
+                setSickLeave({ ...sickLeave, endDate: e.target.value })
+              }
+              InputLabelProps={{ shrink: true }}
+              style={{ marginTop: '1em' }}
+            />
           </div>
 
           <Grid
@@ -167,4 +183,4 @@ const AddHealthCheckEntryForm = ({
   );
 };
 
-export default AddHealthCheckEntryForm;
+export default AddOcupationalHealthCareEntryForm;

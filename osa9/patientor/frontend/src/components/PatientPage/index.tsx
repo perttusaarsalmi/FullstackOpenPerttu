@@ -9,13 +9,21 @@ import EntryDetails from '../EntryDetailsComponent';
 import AddHealthCheckEntryForm from '../AddHealthCheckEntryForm';
 import { Button } from '@mui/material';
 import { AxiosError } from 'axios';
+import OccupationalHealthcareEntry from '../EntryDetailsComponent/OccupationalHealthCareEntry';
+import AddOcupationalHealthCareEntryForm from '../AddOccupationalHealthCareEntryForm';
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
 
   const [patient, setPatient] = useState<Patient>();
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>();
-  const [showForm, setShowForm] = useState(false);
+  const [showHealthCheckEntryForm, setShowHealthCheckEntryForm] =
+    useState(false);
+  const [
+    showOccupationalHealthCareEntryForm,
+    setShowOccupationalHealthCareEntryForm,
+  ] = useState(false);
+
   const [notification, setNotification] = useState('');
 
   useEffect(() => {
@@ -32,7 +40,7 @@ const PatientPage = () => {
     });
   }, [id]);
 
-  const handleAddHealthCheckEntry = async (newEntry: NewEntry) => {
+  const handleAddEntry = async (newEntry: NewEntry) => {
     if (!id) return;
     try {
       const addedEntry = await patientService.createPatientEntry({
@@ -45,7 +53,8 @@ const PatientPage = () => {
           entries: [...patient.entries, addedEntry],
         });
       }
-      setShowForm(false);
+      setShowHealthCheckEntryForm(false);
+      setShowOccupationalHealthCareEntryForm(false);
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         const data = error.response?.data;
@@ -61,7 +70,7 @@ const PatientPage = () => {
             showNotification('Specialist is required');
           } else if (data.error.includes('Invalid date')) {
             showNotification('Invalid date');
-          }else {
+          } else {
             showNotification(data.error);
           }
         } else {
@@ -91,10 +100,19 @@ const PatientPage = () => {
       </h2>
       <div>ssh: {patient?.ssn}</div>
       <div>occupation: {patient?.occupation}</div>
-      {showForm && (
+      {showHealthCheckEntryForm && (
         <AddHealthCheckEntryForm
-          onCancel={() => setShowForm(false)}
-          onSubmitHealthCheckEntry={handleAddHealthCheckEntry}
+          onCancel={() => setShowHealthCheckEntryForm(false)}
+          onSubmitHealthCheckEntry={handleAddEntry}
+          notification={notification}
+        />
+      )}
+      {showOccupationalHealthCareEntryForm && (
+        <AddOcupationalHealthCareEntryForm
+          onCancel={() => setShowOccupationalHealthCareEntryForm(false)}
+          onSubmitOccupationalHealthCareEntry={
+            handleAddEntry
+          }
           notification={notification}
         />
       )}
@@ -104,14 +122,24 @@ const PatientPage = () => {
           <EntryDetails entry={entry} diagnoses={diagnoses}></EntryDetails>
         </div>
       ))}
-      {!showForm && (
+      {!showHealthCheckEntryForm && (
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setShowForm(true)}
+          onClick={() => setShowHealthCheckEntryForm(true)}
           style={{ marginTop: '1em' }}
         >
           Add Health Check Entry
+        </Button>
+      )}
+      {!showOccupationalHealthCareEntryForm && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setShowOccupationalHealthCareEntryForm(true)}
+          style={{ marginTop: '1em', marginLeft: '1em' }}
+        >
+          Add Occupational Health Care Entry
         </Button>
       )}
     </div>
