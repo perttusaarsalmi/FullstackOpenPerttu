@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client/react";
 import { ALL_AUTHORS } from "../queries";
+import UpdateAuthor from "./UpdateAuthor";
 
 const Authors = (props) => {
   const { data, loading, error } = useQuery(ALL_AUTHORS);
@@ -37,6 +38,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <UpdateAuthor></UpdateAuthor>
     </div>
   );
 };
