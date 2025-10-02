@@ -3,10 +3,11 @@ import { EDIT_AUTHOR, ALL_BOOKS, ALL_AUTHORS } from "../queries";
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import Notify from "./Notify";
+import PropTypes from "prop-types";
 
-export const UpdateAuthor = () => {
+export const UpdateAuthor = ({ authors }) => {
+  const [selectedAuthor, setSelectedAuthor] = useState(authors[0]?.name || "");
   const [error, setError] = useState("");
-  const [author, setAuthor] = useState("");
   const [birthyear, setBirthyear] = useState("");
   const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
@@ -16,11 +17,10 @@ export const UpdateAuthor = () => {
     event.preventDefault();
     editAuthor({
       variables: {
-        name: author,
+        name: selectedAuthor,
         setBornTo: Number(birthyear),
       },
     });
-    setAuthor("");
     setBirthyear("");
   };
 
@@ -36,10 +36,16 @@ export const UpdateAuthor = () => {
       <form onSubmit={submit}>
         <div>
           author
-          <input
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
+          <select
+            value={selectedAuthor}
+            onChange={(e) => setSelectedAuthor(e.target.value)}
+          >
+            {authors.map((a) => (
+              <option key={a.name} value={a.name}>
+                {a.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           birthyear
@@ -54,6 +60,13 @@ export const UpdateAuthor = () => {
       </form>
     </div>
   );
+};
+UpdateAuthor.propTypes = {
+  authors: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default UpdateAuthor;
