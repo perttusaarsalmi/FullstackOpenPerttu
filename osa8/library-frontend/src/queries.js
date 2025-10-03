@@ -16,10 +16,10 @@ export const ALL_BOOKS = gql`
       title
       published
       author
+      genres
     }
   }
 `;
-
 
 export const ALL_USERS = gql`
   query {
@@ -31,6 +31,14 @@ export const ALL_USERS = gql`
   }
 `;
 
+export const GET_USER = gql`
+  query {
+    me {
+      username
+      favoriteGenre
+    }
+  }
+`;
 
 export const CREATE_BOOK = gql`
   mutation createBook(
