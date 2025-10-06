@@ -20,7 +20,19 @@ const resolvers = {
       if (args.genre) query.genres = args.genre
       return await Book.find(query)
     },
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      const authors = await Author.find({})
+      const books = await Book.find({})
+      const bookCounts = {}
+      books.forEach((book) => {
+        const authorId = book.author.toString()
+        bookCounts[authorId] = (bookCounts[authorId] || 0) + 1
+      })
+      return authors.map((author) => ({
+        ...author.toObject(),
+        bookCount: bookCounts[author._id.toString()] || 0,
+      }))
+    },
     me: (root, args, context) => context.currentUser,
   },
   Author: {
