@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS } from "../queries";
+import PropTypes from "prop-types";
 
 const NewBook = (props) => {
   const [title, setTitle] = useState("");
@@ -12,6 +13,10 @@ const NewBook = (props) => {
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
   });
+
+  NewBook.propTypes = {
+    show: PropTypes.bool.isRequired,
+  };
 
   if (!props.show) {
     return null;

@@ -6,6 +6,14 @@ import LoginForm from "./LoginForm";
 const Login = ({ show, token, setToken, errorMessage, setError }) => {
   const client = useApolloClient();
 
+  Login.propTypes = {
+    show: PropTypes.bool.isRequired,
+    token: PropTypes.string,
+    setToken: PropTypes.func.isRequired,
+    errorMessage: PropTypes.string,
+    setError: PropTypes.func.isRequired,
+  };
+
   if (!show) {
     return null;
   }
@@ -34,14 +42,6 @@ const Login = ({ show, token, setToken, errorMessage, setError }) => {
       <button onClick={logout}>Logout</button>
     </div>
   );
-};
-
-Login.propTypes = {
-  show: PropTypes.bool.isRequired,
-  token: PropTypes.string,
-  setToken: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string,
-  setError: PropTypes.func.isRequired,
 };
 
 export default Login;

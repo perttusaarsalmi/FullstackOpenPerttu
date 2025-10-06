@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../queries";
 
@@ -7,10 +8,15 @@ const LoginForm = ({ setError, setToken }) => {
   const [password, setPassword] = useState("");
 
   const [login, result] = useMutation(LOGIN, {
-    onError: (error) => {
+    onError: () => {
       setError("Login failed");
     },
   });
+
+  LoginForm.propTypes = {
+    setError: PropTypes.func.isRequired,
+    setToken: PropTypes.func.isRequired,
+  };
 
   useEffect(() => {
     if (result.data) {

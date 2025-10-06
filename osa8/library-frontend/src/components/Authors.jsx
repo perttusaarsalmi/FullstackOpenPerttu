@@ -1,9 +1,14 @@
 import { useQuery } from "@apollo/client/react";
 import { ALL_AUTHORS } from "../queries";
 import UpdateAuthor from "./UpdateAuthor";
+import PropTypes from "prop-types";
 
 const Authors = (props) => {
   const { data, loading, error } = useQuery(ALL_AUTHORS);
+
+  Authors.propTypes = {
+    show: PropTypes.bool.isRequired,
+  };
 
   if (!props.show) {
     return null;

@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client/react";
 import { GET_USER, ALL_BOOKS } from "../queries";
-import { useState } from "react";
+import PropTypes from "prop-types";
 
 const Recommendations = (props) => {
   const { data, loading, error } = useQuery(GET_USER);
@@ -10,7 +10,9 @@ const Recommendations = (props) => {
     error: booksError,
   } = useQuery(ALL_BOOKS);
 
-  const [page, setPage] = useState("authors");
+  Recommendations.propTypes = {
+    show: PropTypes.bool.isRequired,
+  };
 
   if (!props.show) {
     return null;
@@ -38,7 +40,7 @@ const Recommendations = (props) => {
     <div>
       <h3>recommendations</h3>
       <div>
-        books in your favourite{" "}
+        books in your favourite genre{" "}
         <span style={{ fontWeight: "bold" }}>{favoriteGenre}</span>
       </div>
       <table>

@@ -13,6 +13,14 @@ export const UpdateAuthor = ({ authors }) => {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
   });
 
+  UpdateAuthor.propTypes = {
+    authors: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+  };
+
   const submit = (event) => {
     event.preventDefault();
     editAuthor({
@@ -60,13 +68,6 @@ export const UpdateAuthor = ({ authors }) => {
       </form>
     </div>
   );
-};
-UpdateAuthor.propTypes = {
-  authors: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-    })
-  ).isRequired,
 };
 
 export default UpdateAuthor;
